@@ -73,7 +73,7 @@
 ;;
 ;; Enjoy!
 
-;;; Package-Requires: ((emacs "24.0") (s "1.0"))
+;;; Package-Requires: ((emacs "24.3") (s "1.0"))
 
 ;;; Licence:
 ;;  GNU / GPL2
@@ -82,8 +82,8 @@
 
 (require 's)
 
-(unless (>= emacs-major-version 24)
-  (error "Requires Emacs 24 or later"))
+(unless (>= (string-to-number (format "%i.%i" emacs-major-version emacs-minor-version)) 24.3)
+  (error "Requires Emacs 24.3 or later"))
 
 (unless (functionp 's-match)
   (error "Requires s.el library"))
