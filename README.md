@@ -1,7 +1,7 @@
+# Kurecolor
+
 *Author:* Jason Milkins<br>
 *Version:* 1.0<br>
-
-# Kurecolor
 
 A collection of color tools aimed at those working with (normal 6
 digit) hex color codes, useful for CSS, Emacs themes, etc. etc.
@@ -68,7 +68,7 @@ pants on and need no further help from me.
 
 Enjoy!
 
-Package-Requires: ((emacs "24.0") (s "1.0"))
+Package-Requires: ((emacs "24.1") (s "1.0"))
 
 Licence:
  GNU / GPL2
