@@ -170,3 +170,8 @@
   (should (equal (kurecolor-adjust-hue "#329847"  0.5) "#983183")))
 
 (provide 'kurecolor-test)
+
+;; Local Variables:
+;; eval: (when (fboundp 'rainbow-mode) (rainbow-mode +1))
+;; no-byte-compile: t
+;; End:
