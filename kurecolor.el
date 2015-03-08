@@ -2,7 +2,7 @@
 
 ;;; Author: Jason Milkins
 
-;;; Version: 1.1
+;;; Version: 1.2
 
 ;;; Commentary:
 ;;
@@ -238,93 +238,6 @@ Replace with the return value of the function FN with ARGS"
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
-(defun kurecolor-increase-brightness-by-step (x)
-  "Increase brightness on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
-  (kurecolor-replace-current
-   'kurecolor-adjust-brightness
-   (/ (* x kurecolor-color-adjust-brightness-step) 100.0)))
-
-(defun kurecolor-decrease-brightness-by-step (x)
-  "Decrease brightness on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
-  (kurecolor-replace-current
-   'kurecolor-adjust-brightness
-   (/ (* (* -1 x) kurecolor-color-adjust-brightness-step) 100.0)))
-
-(defun kurecolor-increase-saturation-by-step (x)
-  "Increase saturation on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
-  (kurecolor-replace-current
-   'kurecolor-adjust-saturation
-   (/ (* x kurecolor-color-adjust-saturation-step) 100.0)))
-
-(defun kurecolor-decrease-saturation-by-step (x)
-  "Decrease saturation on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
-  (kurecolor-replace-current
-   'kurecolor-adjust-saturation
-   (/ (*  (* -1 x) kurecolor-color-adjust-saturation-step) 100.0)))
-
-(defun kurecolor-increase-hue-by-step (x)
-  "Increase hue on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
-  (kurecolor-replace-current
-   'kurecolor-adjust-hue
-   (/ (* x kurecolor-color-adjust-hue-step) 360.0)))
-
-(defun kurecolor-decrease-hue-by-step (x)
-  "Decrease hue on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
-  (kurecolor-replace-current
-   'kurecolor-adjust-hue
-   (/ (* (* -1 x) kurecolor-color-adjust-hue-step) 360.0)))
-
-(defun kurecolor-set-brightness (color brightness)
-  "Interactively change a COLOR's BRIGHTNESS."
-  (interactive (list
-                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
-                (/ (string-to-number (read-from-minibuffer "Set Brightness (0% - 100%): ")) 100.0)))
-  (insert (kurecolor-hex-set-brightness color brightness)))
-
-(defun kurecolor-set-saturation (color saturation)
-  "Interactively change a COLOR's SATURATION."
-  (interactive (list
-                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
-                (/ (string-to-number (read-from-minibuffer "Set Saturation (0% - 100%): ")) 100.0)))
-  (insert (kurecolor-hex-set-saturation color saturation)))
-
-(defun kurecolor-set-hue (color hue)
-  "Interactively change a COLOR's HUE."
-  (interactive (list
-                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
-                (/ (string-to-number (read-from-minibuffer "Set Hue (0° - 360°): ")) 360.0)))
-  (insert (kurecolor-hex-set-hue color hue)))
-
-(defun kurecolor-hex-set-brightness (hex val)
-  "Change a HEX color's brightness VAL, amount values from 0.0-1.0.
-returns a 6 digit hex color."
-  (destructuring-bind (hue sat skip) (kurecolor-hex-to-hsv hex)
-    (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
-
-(defun kurecolor-hex-set-saturation (hex sat)
-  "Change a HEX color's saturation SAT, amount values from 0-1.
-returns a 6 digit hex color."
-  (destructuring-bind (hue skip val) (kurecolor-hex-to-hsv hex)
-    (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
-
 (defun kurecolor-hex-set-hue (hex hue)
   "Change a HEX color's HUE, amount values from 0-1.
 returns a 6 digit hex color."
@@ -343,32 +256,17 @@ returns a 6 digit hex color."
   "Get the hue of HEX color."
   (third (kurecolor-hex-to-hsv hex)))
 
-(defun kurecolor-hex-hue-group (hex)
-  "Given a HEX color.
-Insert a list of hexcolors of different hue."
-  (interactive "sHex color: ")
-  (loop for n from 9 downto 1 do
-        (insert
-         (format (or kurecolor-color-group-format "\n%s")
-                 (kurecolor-hex-set-hue hex (* n 0.1))))))
+(defun kurecolor-hex-set-brightness (hex val)
+  "Change a HEX color's brightness VAL, amount values from 0.0-1.0.
+returns a 6 digit hex color."
+  (destructuring-bind (hue sat skip) (kurecolor-hex-to-hsv hex)
+    (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
-(defun kurecolor-hex-sat-group (hex)
-  "Given a HEX color.
-Insert a list of hexcolors of different saturation (sat)."
-  (interactive "sHex color: ")
-  (loop for n from 9 downto 1 do
-        (insert
-         (format (or kurecolor-color-group-format "\n%s")
-                 (kurecolor-hex-set-saturation hex (* n 0.1))))))
-
-(defun kurecolor-hex-val-group (hex)
-  "Given a HEX color.
-Insert a list of hexcolors of different brightness (val)."
-  (interactive "sHex color: ")
-  (loop for n from 9 downto 1 do
-        (insert
-         (format (or kurecolor-color-group-format "\n%s")
-                 (kurecolor-hex-set-brightness hex (* n 0.1))))))
+(defun kurecolor-hex-set-saturation (hex sat)
+  "Change a HEX color's saturation SAT, amount values from 0-1.
+returns a 6 digit hex color."
+  (destructuring-bind (hue skip val) (kurecolor-hex-to-hsv hex)
+    (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-interpolate (color1 color2)
   "Interpolate two colors COLOR1 and COLOR2, to get their mixed color."
@@ -406,16 +304,135 @@ Insert a list of hexcolors of different brightness (val)."
       (mapcar 'to-8bit (kurecolor-hex-to-rgb hex))
     (format "rgba(%i, %i, %i, 1.0)" r g b)))
 
+;;; Interactive functions
+
+;;;###autoload
+(defun kurecolor-increase-brightness-by-step (x)
+  "Increase brightness on hex color at point (or in region) by step.
+Accepts universal argument (X)."
+  (interactive "P")
+  (unless (numberp x) (setq x 1))
+  (kurecolor-replace-current
+   'kurecolor-adjust-brightness
+   (/ (* x kurecolor-color-adjust-brightness-step) 100.0)))
+
+;;;###autoload
+(defun kurecolor-decrease-brightness-by-step (x)
+  "Decrease brightness on hex color at point (or in region) by step.
+Accepts universal argument (X)."
+  (interactive "P")
+  (unless (numberp x) (setq x 1))
+  (kurecolor-replace-current
+   'kurecolor-adjust-brightness
+   (/ (* (* -1 x) kurecolor-color-adjust-brightness-step) 100.0)))
+
+;;;###autoload
+(defun kurecolor-increase-saturation-by-step (x)
+  "Increase saturation on hex color at point (or in region) by step.
+Accepts universal argument (X)."
+  (interactive "P")
+  (unless (numberp x) (setq x 1))
+  (kurecolor-replace-current
+   'kurecolor-adjust-saturation
+   (/ (* x kurecolor-color-adjust-saturation-step) 100.0)))
+
+;;;###autoload
+(defun kurecolor-decrease-saturation-by-step (x)
+  "Decrease saturation on hex color at point (or in region) by step.
+Accepts universal argument (X)."
+  (interactive "P")
+  (unless (numberp x) (setq x 1))
+  (kurecolor-replace-current
+   'kurecolor-adjust-saturation
+   (/ (*  (* -1 x) kurecolor-color-adjust-saturation-step) 100.0)))
+
+;;;###autoload
+(defun kurecolor-increase-hue-by-step (x)
+  "Increase hue on hex color at point (or in region) by step.
+Accepts universal argument (X)."
+  (interactive "P")
+  (unless (numberp x) (setq x 1))
+  (kurecolor-replace-current
+   'kurecolor-adjust-hue
+   (/ (* x kurecolor-color-adjust-hue-step) 360.0)))
+
+;;;###autoload
+(defun kurecolor-decrease-hue-by-step (x)
+  "Decrease hue on hex color at point (or in region) by step.
+Accepts universal argument (X)."
+  (interactive "P")
+  (unless (numberp x) (setq x 1))
+  (kurecolor-replace-current
+   'kurecolor-adjust-hue
+   (/ (* (* -1 x) kurecolor-color-adjust-hue-step) 360.0)))
+
+;;;###autoload
+(defun kurecolor-set-brightness (color brightness)
+  "Interactively change a COLOR's BRIGHTNESS."
+  (interactive (list
+                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
+                (/ (string-to-number (read-from-minibuffer "Set Brightness (0% - 100%): ")) 100.0)))
+  (insert (kurecolor-hex-set-brightness color brightness)))
+
+;;;###autoload
+(defun kurecolor-set-saturation (color saturation)
+  "Interactively change a COLOR's SATURATION."
+  (interactive (list
+                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
+                (/ (string-to-number (read-from-minibuffer "Set Saturation (0% - 100%): ")) 100.0)))
+  (insert (kurecolor-hex-set-saturation color saturation)))
+
+;;;###autoload
+(defun kurecolor-set-hue (color hue)
+  "Interactively change a COLOR's HUE."
+  (interactive (list
+                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
+                (/ (string-to-number (read-from-minibuffer "Set Hue (0° - 360°): ")) 360.0)))
+  (insert (kurecolor-hex-set-hue color hue)))
+
+;;;###autoload
+(defun kurecolor-hex-hue-group (hex)
+  "Given a HEX color.
+Insert a list of hexcolors of different hue."
+  (interactive "sHex color: ")
+  (loop for n from 9 downto 1 do
+        (insert
+         (format (or kurecolor-color-group-format "\n%s")
+                 (kurecolor-hex-set-hue hex (* n 0.1))))))
+
+;;;###autoload
+(defun kurecolor-hex-sat-group (hex)
+  "Given a HEX color.
+Insert a list of hexcolors of different saturation (sat)."
+  (interactive "sHex color: ")
+  (loop for n from 9 downto 1 do
+        (insert
+         (format (or kurecolor-color-group-format "\n%s")
+                 (kurecolor-hex-set-saturation hex (* n 0.1))))))
+
+;;;###autoload
+(defun kurecolor-hex-val-group (hex)
+  "Given a HEX color.
+Insert a list of hexcolors of different brightness (val)."
+  (interactive "sHex color: ")
+  (loop for n from 9 downto 1 do
+        (insert
+         (format (or kurecolor-color-group-format "\n%s")
+                 (kurecolor-hex-set-brightness hex (* n 0.1))))))
+
+;;;###autoload
 (defun kurecolor-cssrgb-at-point-or-region-to-hex ()
   "CSS rgb color at point or region to hex rgb."
   (interactive)
   (kurecolor-replace-current 'kurecolor-cssrgb-to-hex))
 
+;;;###autoload
 (defun kurecolor-hexcolor-at-point-or-region-to-css-rgb ()
   "Hex rgb color at point or region to css rgb color."
   (interactive)
   (kurecolor-replace-current 'kurecolor-hex-to-cssrgb))
 
+;;;###autoload
 (defun kurecolor-hexcolor-at-point-or-region-to-css-rgba ()
   "Hex rgb color at point or region to css rgba.
 Opacity is always set to 1.0."
