@@ -2,7 +2,7 @@
 
 ;;; Author: Jason Milkins
 
-;;; Version: 1.2
+;;; Version: 1.2.1
 
 ;;; Commentary:
 ;;
@@ -269,7 +269,7 @@ returns a 6 digit hex color."
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-interpolate (color1 color2)
-  "Interpolate two colors COLOR1 and COLOR2, to get their mixed color."
+  "Interpolate two hex colors COLOR1 and COLOR2, to get their mixed color."
   (destructuring-bind (r g b)
       (mapcar #'(lambda (n) (* (/ n 2) 255.0))
               (cl-mapcar '+ (kurecolor-hex-to-rgb color1)
@@ -283,7 +283,9 @@ returns a 6 digit hex color."
                (concat "rgba?(\s*"
                        "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
                        "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
-                       "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*)")
+                       "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,?[^)]*)")
+               ;; For now we discard the alpha but we need to be aware
+               ;; of its presence for the Rx to match rgba() colors.
                cssrgb))))
     (destructuring-bind (r g b) (mapcar 'string-to-number rgb)
       (format "#%02X%02X%02X" r g b))))
