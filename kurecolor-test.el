@@ -35,9 +35,14 @@
   (skip-unless (featurep 'kurecolor))
   (should (equal (kurecolor-cssrgb-to-hex "rgb(52, 114, 145)") "#347291"))
   (should (equal (kurecolor-cssrgb-to-hex "rgb(10%, 20%, 90%)") "#0A145A"))
-  ;; pending (should (equal (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 1.0)") "#347291"))
-  ;; pending (should (equal (kurecolor-cssrgb-to-hex "rgba(10%, 20%, 90%, 1.0)") "#0A145A"))
-  )
+  (should (equal (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 1.0)") "#347291"))
+  (should (equal (kurecolor-cssrgb-to-hex "rgba(10%, 20%, 90%, 1.0)") "#0A145A")))
+
+(ert-deftest test-kurecolor-cssrgba-to-hex ()
+  "Test conversion of css rgba to hex."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 1.0)") "#347291"))
+  (should (equal (kurecolor-cssrgb-to-hex "rgba(10%, 20%, 90%, 1.0)") "#0A145A")))
 
 (ert-deftest test-kurecolor-hex-set-hue ()
   "Test setting brightness of hex."
