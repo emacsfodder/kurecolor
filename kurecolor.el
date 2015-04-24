@@ -1,8 +1,8 @@
 ;;; kurecolor.el --- color editing goodies for Emacs
 
-;;; Author: Jason Milkins
+;;; Author: Jason Milkins <jasonm23@gmail.com>
 
-;;; Version: 1.2.1
+;;; Version: 1.2.2
 
 ;;; Commentary:
 ;;
@@ -372,24 +372,33 @@ Accepts universal argument (X)."
 (defun kurecolor-set-brightness (color brightness)
   "Interactively change a COLOR's BRIGHTNESS."
   (interactive (list
-                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
+                (if mark-active
+                    (buffer-substring-no-properties (region-beginning) (region-end))
+                  (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): "))
                 (/ (string-to-number (read-from-minibuffer "Set Brightness (0% - 100%): ")) 100.0)))
+  (when mark-active (kill-region (region-beginning) (region-end)))
   (insert (kurecolor-hex-set-brightness color brightness)))
 
 ;;;###autoload
 (defun kurecolor-set-saturation (color saturation)
   "Interactively change a COLOR's SATURATION."
   (interactive (list
-                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
+                (if mark-active
+                    (buffer-substring-no-properties (region-beginning) (region-end))
+                  (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): "))
                 (/ (string-to-number (read-from-minibuffer "Set Saturation (0% - 100%): ")) 100.0)))
+  (when mark-active (kill-region (region-beginning) (region-end)))
   (insert (kurecolor-hex-set-saturation color saturation)))
 
 ;;;###autoload
 (defun kurecolor-set-hue (color hue)
   "Interactively change a COLOR's HUE."
   (interactive (list
-                (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): ")
+                (if mark-active
+                    (buffer-substring-no-properties (region-beginning) (region-end))
+                  (read-from-minibuffer "Hex Color (#000000 - #FFFFFF): "))
                 (/ (string-to-number (read-from-minibuffer "Set Hue (0° - 360°): ")) 360.0)))
+  (when mark-active (kill-region (region-beginning) (region-end)))
   (insert (kurecolor-hex-set-hue color hue)))
 
 ;;;###autoload
