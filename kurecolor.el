@@ -2,12 +2,12 @@
 
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 
-;;; Version: 1.2.2
+;;; Version: 1.2.3
 
 ;;; Commentary:
 ;;
 ;; A collection of color tools aimed at those working with (normal 6
-;; digit) hex color codes, useful for CSS, Emacs themes, etc. etc.
+;; digit) hex color codes, useful for CSS, Emacs themes, etc.
 ;;
 ;; View the presentation at https://github.com/emacsfodder/kurecolor
 ;;
@@ -184,7 +184,7 @@ For this module, h is returned as [0-1] instead of [0-360]."
 
 (defun kurecolor-hsv-to-rgb (h s v)
   "Convert hsv (H S V) to red green blue.
-For this module, H is exepected as [0-1] instead of [0-360]."
+Note: args H S V are expected to be a values from 0..1"
   (let* ((i (floor (* h 6.0)))
          (f (- (* h 6.0) i))
          (p (* v (- 1.0 s)))
@@ -192,12 +192,12 @@ For this module, H is exepected as [0-1] instead of [0-360]."
          (d (* v (- 1.0 (* (- 1.0 f) s))))
          (m (% i 6)))
     (cond
-     ((= m 0) (list v d p))
-     ((= m 1) (list q v p))
-     ((= m 2) (list p v d))
-     ((= m 3) (list p q v))
-     ((= m 4) (list d p v))
-     ((= m 5) (list v p q)))))
+     ((= m 0) `(,v ,d ,p))
+     ((= m 1) `(,q ,v ,p))
+     ((= m 2) `(,p ,v ,d))
+     ((= m 3) `(,p ,q ,v))
+     ((= m 4) `(,d ,p ,v))
+     ((= m 5) `(,v ,p ,q)))))
 
 (defun kurecolor-replace-current (fn &rest args)
   "Get the current unspaced string at point.
@@ -212,8 +212,11 @@ Replace with the return value of the function FN with ARGS"
         (when (> pos1 0)
           (setq pos1 (- pos1 1)))))
     (setq excerpt (buffer-substring-no-properties pos1 pos2))
-    (when args (setq change (car args)))
-    (setq replacement (funcall fn excerpt change))
+    (if args
+        (progn (setq change (car args))
+               (setq replacement (funcall fn excerpt change)))
+      ;; no args
+      (setq replacement (funcall fn excerpt)))
     (delete-region pos1 pos2)
     (insert replacement)))
 
