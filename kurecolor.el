@@ -2,7 +2,7 @@
 
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 
-;;; Version: 1.2.3
+;;; Version: 1.2.4
 
 ;;; Commentary:
 ;;

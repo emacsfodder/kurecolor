@@ -1,8 +1,5 @@
 # kurecolor - color editing goodies for Emacs
 
-*Author:* Jason Milkins<br>
-*Version:* 1.2.1<br>
-
 A collection of color tools aimed at those working with (normal 6
 digit) hex color codes, useful for CSS, Emacs themes, etc. etc.
 
