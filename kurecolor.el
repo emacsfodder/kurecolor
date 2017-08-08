@@ -92,8 +92,8 @@
 
 ;;; Package-Requires: ((emacs "24.1") (s "1.0"))
 
-;;; Licence:
-;;  GNU / GPL2
+;;; Licence: MIT
+
 
 ;;; Code:
 
