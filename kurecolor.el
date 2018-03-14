@@ -2,7 +2,7 @@
 
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 
-;;; Version: 1.2.4
+;;; Version: 1.2.5
 
 ;;; Commentary:
 ;;
@@ -97,6 +97,7 @@
 
 ;;; Code:
 
+(require 'cl)
 (require 's)
 
 (unless (>= (string-to-number (format "%i.%i" emacs-major-version emacs-minor-version)) 24.1)
