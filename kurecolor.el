@@ -248,16 +248,16 @@ returns a 6 digit hex color."
   (destructuring-bind (skip sat val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
-(defun kurecolor-hex-get-brightness (hex)
-  "Get the brightness of HEX color."
+(defun kurecolor-hex-get-hue (hex)
+  "Get the hue of HEX color."
   (first (kurecolor-hex-to-hsv hex)))
 
 (defun kurecolor-hex-get-saturation (hex)
   "Get the saturation of HEX color."
   (second (kurecolor-hex-to-hsv hex)))
 
-(defun kurecolor-hex-get-hue (hex)
-  "Get the hue of HEX color."
+(defun kurecolor-hex-get-brightness (hex)
+  "Get the brightness of HEX color."
   (third (kurecolor-hex-to-hsv hex)))
 
 (defun kurecolor-hex-set-brightness (hex val)
