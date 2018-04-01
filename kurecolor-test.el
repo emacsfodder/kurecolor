@@ -114,17 +114,23 @@
 (ert-deftest test-kurecolor-hex-get-brightness ()
   "Test getting brightness from hex."
   (skip-unless (featurep 'kurecolor))
-  (should (equal (kurecolor-hex-get-brightness "#006091") 0.5563218390804597)))
+  (should (equal (kurecolor-hex-get-brightness "#FFFFFF") 1.0))
+  (should (equal (kurecolor-hex-get-brightness "#808080") (/ 128.0 255.0)))
+  (should (equal (kurecolor-hex-get-brightness "#000000") 0.0)))
 
 (ert-deftest test-kurecolor-hex-get-saturation ()
   "Test getting saturation from hex."
   (skip-unless (featurep 'kurecolor))
-  (should (equal (kurecolor-hex-get-saturation "#006091") 1.0)))
+  (should (equal (kurecolor-hex-get-saturation "#00FF00") 1.0))
+  (should (equal (kurecolor-hex-get-saturation "#7FFF7F") (/ 128.0 255.0)))
+  (should (equal (kurecolor-hex-get-saturation "#000000") 0)))
 
 (ert-deftest test-kurecolor-hex-get-hue ()
   "Test getting hue from hex."
   (skip-unless (featurep 'kurecolor))
-  (should (equal (kurecolor-hex-get-hue "#006091") 0.5686274509803921)))
+  (should (equal (kurecolor-hex-get-hue "#FF0000") (/ 0 360.0)))
+  (should (equal (kurecolor-hex-get-hue "#00FF00") (/ 120.0 360.0)))
+  (should (equal (kurecolor-hex-get-hue "#0000FF") (/ 240.0 360.0))))
 
 (ert-deftest test-kurecolor-adjust-sat ()
   "Test adjustment of sat (saturation)."
