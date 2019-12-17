@@ -97,7 +97,6 @@
 
 ;;; Code:
 
-(require 'cl)
 (require 's)
 
 (unless (>= (string-to-number (format "%i.%i" emacs-major-version emacs-minor-version)) 24.1)
