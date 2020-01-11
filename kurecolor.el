@@ -104,9 +104,6 @@
 (unless (>= (string-to-number (format "%i.%i" emacs-major-version emacs-minor-version)) 24.1)
   (error "Requires Emacs 24.1 or later"))
 
-(unless (functionp 's-match)
-  (error "Requires s.el library"))
-
 (defgroup kurecolor nil
   "Kurecolor customizations."
   :group 'tools)
