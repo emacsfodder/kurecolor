@@ -98,6 +98,8 @@
 ;;; Code:
 
 (require 's)
+(eval-when-compile
+  (require 'cl-macs))
 
 (unless (>= (string-to-number (format "%i.%i" emacs-major-version emacs-minor-version)) 24.1)
   (error "Requires Emacs 24.1 or later"))
@@ -151,7 +153,7 @@
 
 (defun kurecolor-rgb-to-hex (rgb)
   "Replacement simple RGB to hex."
-  (destructuring-bind
+  (cl-destructuring-bind
       (red green blue)
       (mapcar 'to-8bit   rgb)
     (format "#%02X%02X%02X" red green blue)))
@@ -159,18 +161,18 @@
 (defun kurecolor-rgb-to-hsv (rgb)
   "Convert RGB, a list of (r g b) to list (h s v).
 For this module, h is returned as [0-1] instead of [0-360]."
-  (destructuring-bind
+  (cl-destructuring-bind
       (red green blue) rgb
     (let*
         ((val (max red green blue))
          (delta (- val (min red green blue)))
-         (sat (if (plusp val)
+         (sat (if (cl-plusp val)
                   (/ delta val)
                 0))
          (normalize #'(lambda
                         (constant right left)
                         (let ((hue (+ constant (/ (* 60 (- right left)) delta))))
-                          (if (minusp hue)
+                          (if (cl-minusp hue)
                               (+ hue 360)
                             hue)))))
       (list (/ (cond
@@ -222,21 +224,21 @@ Replace with the return value of the function FN with ARGS"
 
 (defun kurecolor-adjust-brightness (hex amount)
   "Adjust the HEX color brightness by AMOUNT 0.0-0.1."
-  (destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
+  (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
     (setq val (min 1.0 (+ amount val)))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-adjust-saturation (hex amount)
   "Adjust the HEX color saturation by AMOUNT 0.0-0.1."
-  (destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
+  (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
     (setq sat (min 1.0 (+ sat amount)))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-adjust-hue (hex amount)
   "Adjust the HEX color hue by AMOUNT 0.0-0.1."
-  (destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
+  (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
     (setq hue (mod (+ hue amount) 1.0))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
@@ -244,36 +246,36 @@ Replace with the return value of the function FN with ARGS"
 (defun kurecolor-hex-set-hue (hex hue)
   "Change a HEX color's HUE, amount values from 0-1.
 returns a 6 digit hex color."
-  (destructuring-bind (skip sat val) (kurecolor-hex-to-hsv hex)
+  (cl-destructuring-bind (skip sat val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-hex-get-hue (hex)
   "Get the hue of HEX color."
-  (first (kurecolor-hex-to-hsv hex)))
+  (car (kurecolor-hex-to-hsv hex)))
 
 (defun kurecolor-hex-get-saturation (hex)
   "Get the saturation of HEX color."
-  (second (kurecolor-hex-to-hsv hex)))
+  (cadr (kurecolor-hex-to-hsv hex)))
 
 (defun kurecolor-hex-get-brightness (hex)
   "Get the brightness of HEX color."
-  (third (kurecolor-hex-to-hsv hex)))
+  (caddr (kurecolor-hex-to-hsv hex)))
 
 (defun kurecolor-hex-set-brightness (hex val)
   "Change a HEX color's brightness VAL, amount values from 0.0-1.0.
 returns a 6 digit hex color."
-  (destructuring-bind (hue sat skip) (kurecolor-hex-to-hsv hex)
+  (cl-destructuring-bind (hue sat skip) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-hex-set-saturation (hex sat)
   "Change a HEX color's saturation SAT, amount values from 0-1.
 returns a 6 digit hex color."
-  (destructuring-bind (hue skip val) (kurecolor-hex-to-hsv hex)
+  (cl-destructuring-bind (hue skip val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-interpolate (color1 color2)
   "Interpolate two hex colors COLOR1 and COLOR2, to get their mixed color."
-  (destructuring-bind (r g b)
+  (cl-destructuring-bind (r g b)
       (mapcar #'(lambda (n) (* (/ n 2) 255.0))
               (cl-mapcar '+ (kurecolor-hex-to-rgb color1)
                          (kurecolor-hex-to-rgb color2)))
@@ -290,7 +292,7 @@ returns a 6 digit hex color."
                ;; For now we discard the alpha but we need to be aware
                ;; of its presence for the Rx to match rgba() colors.
                cssrgb))))
-    (destructuring-bind (r g b) (mapcar 'string-to-number rgb)
+    (cl-destructuring-bind (r g b) (mapcar 'string-to-number rgb)
       (format "#%02X%02X%02X" r g b))))
 
 (defun to-8bit (n)
@@ -299,13 +301,13 @@ returns a 6 digit hex color."
 
 (defun kurecolor-hex-to-cssrgb (hex)
   "Convert a HEX rgb color to cssrgb."
-  (destructuring-bind (r g b)
+  (cl-destructuring-bind (r g b)
       (mapcar 'to-8bit (kurecolor-hex-to-rgb hex))
     (format "rgb(%i, %i, %i)" r g b)))
 
 (defun kurecolor-hex-to-cssrgba (hex)
   "Convert a HEX rgb color to css rgba (only with 1.0 alpha)."
-  (destructuring-bind (r g b)
+  (cl-destructuring-bind (r g b)
       (mapcar 'to-8bit (kurecolor-hex-to-rgb hex))
     (format "rgba(%i, %i, %i, 1.0)" r g b)))
 
