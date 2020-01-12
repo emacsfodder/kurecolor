@@ -101,7 +101,7 @@
 (eval-when-compile
   (require 'cl-macs))
 
-(unless (>= (string-to-number (format "%i.%i" emacs-major-version emacs-minor-version)) 24.1)
+(unless (>= emacs-major-version 24)
   (error "Requires Emacs 24.1 or later"))
 
 (defgroup kurecolor nil
