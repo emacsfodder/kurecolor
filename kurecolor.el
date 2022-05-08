@@ -408,7 +408,7 @@ Accepts universal argument (X)."
   "Given a HEX color.
 Insert a list of hexcolors of different hue."
   (interactive "sHex color: ")
-  (loop for n from 9 downto 1 do
+  (cl-loop for n from 9 downto 1 do
         (insert
          (format (or kurecolor-color-group-format "\n%s")
                  (kurecolor-hex-set-hue hex (* n 0.1))))))
@@ -418,7 +418,7 @@ Insert a list of hexcolors of different hue."
   "Given a HEX color.
 Insert a list of hexcolors of different saturation (sat)."
   (interactive "sHex color: ")
-  (loop for n from 9 downto 1 do
+  (cl-loop for n from 9 downto 1 do
         (insert
          (format (or kurecolor-color-group-format "\n%s")
                  (kurecolor-hex-set-saturation hex (* n 0.1))))))
@@ -428,7 +428,7 @@ Insert a list of hexcolors of different saturation (sat)."
   "Given a HEX color.
 Insert a list of hexcolors of different brightness (val)."
   (interactive "sHex color: ")
-  (loop for n from 9 downto 1 do
+  (cl-loop for n from 9 downto 1 do
         (insert
          (format (or kurecolor-color-group-format "\n%s")
                  (kurecolor-hex-set-brightness hex (* n 0.1))))))
