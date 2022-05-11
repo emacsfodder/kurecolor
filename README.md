@@ -1,6 +1,6 @@
 # kurecolor - color editing goodies for Emacs
 
-[![MELPA](http://melpa-stable.milkbox.net/packages/kurecolor-badge.svg)](http://melpa-stable.milkbox.net/#/kurecolor)
+[![MELPA](http://stable.melpa.org/packages/kurecolor-badge.svg)](http://melpa-stable.milkbox.net/#/kurecolor)
 [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 
 A collection of color tools aimed at those working with (normal 6
