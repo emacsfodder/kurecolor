@@ -1,0 +1,7 @@
+#!/bin/sh
+
+emacs --batch \
+  -l ~/.emacs.d/init.el \
+  -l ert \
+  -l ./kurecolor-test.el \
+  --eval "(ert-run-tests-batch-and-exit)"
