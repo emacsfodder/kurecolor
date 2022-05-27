@@ -319,7 +319,7 @@ returns a 6 digit hex color."
                          ;; - NOTE: Malformed colorLiterals will fail .
                                  "#colorLiteral(red: \\(.*\\), green: \\(.*\\), blue: \\(.*\\), alpha: \\(.*\\))"
                                  color-literal)))))
-    (format "#%02X%02X%02X%02X" red green blue alpha)))y
+    (format "#%02X%02X%02X%02X" red green blue alpha)))
 
 (defun kurecolor-xcode-color-literal-to-hex-rgb(color-literal)
   "Convert an XCode COLOR-LITERAL to a hex rgb string."
