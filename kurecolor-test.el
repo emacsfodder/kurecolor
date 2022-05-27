@@ -189,12 +189,38 @@
            "#163242FF")))
 
 (ert-deftest test-kurecolor-xcode-literal-to-hex-rgb ()
-  "Test conversion of XCode color literal to hex rgba string."
+  "Test conversion of XCode color literal to hex rgb string."
   (skip-unless (featurep 'kurecolor))
   (should (equal
            (kurecolor-xcode-color-literal-to-hex-rgb
             "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
            "#163242")))
+
+(ert-deftest test-kurecolor-xcode-literal-to-hex-rgb-zero-padding ()
+  "Test conversion of XCode color literal to hex rgba string."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal
+           (kurecolor-xcode-color-literal-to-hex-rgb
+            "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.1294117647, alpha: 1)")
+           "#0E1C20")))
+
+(ert-deftest test-kurecolor-multiple-xcode-literal-to-hex-rgb ()
+  "Test conversion of XCode color literal to hex rgba string."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal
+
+           (list "#0E1B21"
+                 "#ECF3F6"
+                 "#ADC3CC")
+
+           (list  (kurecolor-xcode-color-literal-to-hex-rgb
+                   "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
+
+                  (kurecolor-xcode-color-literal-to-hex-rgb
+                   "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
+
+                  (kurecolor-xcode-color-literal-to-hex-rgb
+                   "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")))))
 
 (provide 'kurecolor-test)
 
