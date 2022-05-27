@@ -180,6 +180,22 @@
   (should (equal (kurecolor-adjust-hue "#AA6600"  0.1) "#87AA00"))
   (should (equal (kurecolor-adjust-hue "#329847"  0.5) "#983183")))
 
+(ert-deftest test-kurecolor-xcode-literal-to-hex-rgba ()
+  "Test conversion of XCode color literal to hex rgba string."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal
+           (kurecolor-xcode-color-literal-to-hex-rgba
+            "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
+           "#163242FF")))
+
+(ert-deftest test-kurecolor-xcode-literal-to-hex-rgb ()
+  "Test conversion of XCode color literal to hex rgba string."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal
+           (kurecolor-xcode-color-literal-to-hex-rgb
+            "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
+           "#163242")))
+
 (provide 'kurecolor-test)
 
 ;; Local Variables:

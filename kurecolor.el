@@ -1,8 +1,8 @@
-;;; kurecolor.el --- color editing goodies for Emacs
+;;; kurecolor.el --- color editing goodies
 
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 
-;;; Version: 1.2.6
+;;; Version: 1.2.8
 
 ;;; Commentary:
 ;;
@@ -308,6 +308,24 @@ returns a 6 digit hex color."
       (mapcar 'to-8bit (kurecolor-hex-to-rgb hex))
     (format "rgba(%i, %i, %i, 1.0)" r g b)))
 
+(defun kurecolor-xcode-color-literal-to-hex-rgba(color-literal)
+  "Convert an XCode COLOR-LITERAL to a hex rgba string."
+  (cl-destructuring-bind (red green blue alpha)
+      (mapcar 'to-8bit
+              (mapcar 'string-to-number
+                      (cdr
+                       (car
+                        (s-match-strings-all
+                         ;; - NOTE: Malformed colorLiterals will fail .
+                                 "#colorLiteral(red: \\(.*\\), green: \\(.*\\), blue: \\(.*\\), alpha: \\(.*\\))"
+                                 color-literal)))))
+    (format "#%2X%2X%2X%2X" red green blue alpha)))
+
+(defun kurecolor-xcode-color-literal-to-hex-rgb(color-literal)
+  "Convert an XCode COLOR-LITERAL to a hex rgb string."
+  (substring
+   (kurecolor-xcode-color-literal-to-hex-rgba color-literal) 0 7))
+
 ;;; Interactive functions
 
 ;;;###autoload
@@ -451,6 +469,18 @@ Insert a list of hexcolors of different brightness (val)."
 Opacity is always set to 1.0."
   (interactive)
   (kurecolor-replace-current 'kurecolor-hex-to-cssrgba))
+
+;;;###autoload
+(defun kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgba ()
+  "XCode color literal at point to hex rgba."
+  (interactive)
+  (kurecolor-replace-current 'kurecolor-xcode-color-literal-to-hex-rgba))
+
+;;;###autoload
+(defun kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgb ()
+  "XCode color literal at point to hex rgb."
+  (interactive)
+  (kurecolor-replace-current 'kurecolor-xcode-color-literal-to-hex-rgb))
 
 (provide 'kurecolor)
 
