@@ -2,7 +2,7 @@
 
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 
-;;; Version: 1.2.8
+;;; Version: 1.2.9
 
 ;;; Commentary:
 ;;
@@ -152,7 +152,7 @@
   "Replacement simple RGB to hex."
   (cl-destructuring-bind
       (red green blue)
-      (mapcar 'to-8bit   rgb)
+      (mapcar 'kurecolor-to-8bit   rgb)
     (format "#%02X%02X%02X" red green blue)))
 
 (defun kurecolor-rgb-to-hsv (rgb)
@@ -292,26 +292,26 @@ returns a 6 digit hex color."
     (cl-destructuring-bind (r g b) (mapcar 'string-to-number rgb)
       (format "#%02X%02X%02X" r g b))))
 
-(defun to-8bit (n)
+(defun kurecolor-to-8bit (n)
   "Convert N (0.0-1.0) to 0-255."
   (* n 255.0))
 
 (defun kurecolor-hex-to-cssrgb (hex)
   "Convert a HEX rgb color to cssrgb."
   (cl-destructuring-bind (r g b)
-      (mapcar 'to-8bit (kurecolor-hex-to-rgb hex))
+      (mapcar 'kurecolor-to-8bit (kurecolor-hex-to-rgb hex))
     (format "rgb(%i, %i, %i)" r g b)))
 
 (defun kurecolor-hex-to-cssrgba (hex)
   "Convert a HEX rgb color to css rgba (only with 1.0 alpha)."
   (cl-destructuring-bind (r g b)
-      (mapcar 'to-8bit (kurecolor-hex-to-rgb hex))
+      (mapcar 'kurecolor-to-8bit (kurecolor-hex-to-rgb hex))
     (format "rgba(%i, %i, %i, 1.0)" r g b)))
 
 (defun kurecolor-xcode-color-literal-to-hex-rgba(color-literal)
   "Convert an XCode COLOR-LITERAL to a hex rgba string."
   (cl-destructuring-bind (red green blue alpha)
-      (mapcar 'to-8bit
+      (mapcar 'kurecolor-to-8bit
               (mapcar 'string-to-number
                       (cdr
                        (car
@@ -319,7 +319,7 @@ returns a 6 digit hex color."
                          ;; - NOTE: Malformed colorLiterals will fail .
                                  "#colorLiteral(red: \\(.*\\), green: \\(.*\\), blue: \\(.*\\), alpha: \\(.*\\))"
                                  color-literal)))))
-    (format "#%02X%02X%02X%02X" red green blue alpha)))
+    (format "#%02X%02X%02X%02X" red green blue alpha)))y
 
 (defun kurecolor-xcode-color-literal-to-hex-rgb(color-literal)
   "Convert an XCode COLOR-LITERAL to a hex rgb string."
