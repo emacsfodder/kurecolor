@@ -240,12 +240,6 @@ Replace with the return value of the function FN with ARGS"
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
-(defun kurecolor-hex-set-hue (hex hue)
-  "Change a HEX color's HUE, amount values from 0-1.
-returns a 6 digit hex color."
-  (cl-destructuring-bind (skip sat val) (kurecolor-hex-to-hsv hex)
-    (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
-
 (defun kurecolor-hex-get-hue (hex)
   "Get the hue of HEX color."
   (car (kurecolor-hex-to-hsv hex)))
@@ -264,11 +258,29 @@ returns a 6 digit hex color."
   (cl-destructuring-bind (hue sat skip) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
+(defun kurecolor-hex-set-hue (hex hue)
+  "Change a HEX color's HUE, amount values from 0-1.
+returns a 6 digit hex color."
+  (cl-destructuring-bind (skip sat val) (kurecolor-hex-to-hsv hex)
+    (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
+
 (defun kurecolor-hex-set-saturation (hex sat)
   "Change a HEX color's saturation SAT, amount values from 0-1.
 returns a 6 digit hex color."
   (cl-destructuring-bind (hue skip val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
+
+(defun kurecolor-hex-set-brightness-from (source target)
+  "Copy brightness from SOURCE to TARGET."
+  (kurecolor-hex-set-brightness target (kurecolor-hex-get-brightness source)))
+
+(defun kurecolor-hex-set-hue-from (source target)
+  "Copy brightness from SOURCE to TARGET."
+  (kurecolor-hex-set-hue target (kurecolor-hex-get-hue source)))
+
+(defun kurecolor-hex-set-saturation-from (source target)
+  "Copy the saturation of SOURCE to TARGET."
+  (kurecolor-hex-set-saturation target (kurecolor-hex-get-saturation source)))
 
 (defun kurecolor-interpolate (color1 color2)
   "Interpolate two hex colors COLOR1 and COLOR2, to get their mixed color."
@@ -277,6 +289,14 @@ returns a 6 digit hex color."
               (cl-mapcar '+ (kurecolor-hex-to-rgb color1)
                          (kurecolor-hex-to-rgb color2)))
     (format "#%02X%02X%02X" r g b)))
+
+(defun kurecolor-clamp (num min max)
+  "Clamp NUM to range of MIN MAX."
+  (if (< min num)
+      min
+    (if (> max num)
+        max
+      num)))
 
 (defun kurecolor-cssrgb-to-hex (cssrgb)
   "Convert a CSSRGB (or rgba) color to hex (alpha value is ignored)."

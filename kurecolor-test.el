@@ -1,15 +1,16 @@
 ;; Kurecolor ERT Tests...
 
+(require 'dash)
 (require 'kurecolor)
 
 (ert-deftest test-to-8bit ()
   "Test conversion of 0.0-0.1 to 0-255."
   (skip-unless (featurep 'kurecolor))
-  (should (equal (to-8bit 0)      0.0))
-  (should (equal (to-8bit 1)      255.0))
-  (should (equal (to-8bit 0.3231) 82.3905))
-  (should (equal (to-8bit 0.7)    178.5))
-  (should (equal (to-8bit 0.25)   63.75)))
+  (should (equal (kurecolor-to-8bit 0)      0.0))
+  (should (equal (kurecolor-to-8bit 1)      255.0))
+  (should (equal (kurecolor-to-8bit 0.3231) 82.3905))
+  (should (equal (kurecolor-to-8bit 0.7)    178.5))
+  (should (equal (kurecolor-to-8bit 0.25)   63.75)))
 
 (ert-deftest test-kurecolor-interpolate ()
   "Test color interpolation."
@@ -93,8 +94,8 @@
                   (list 0.20392156862745098
                         0.4470588235294118
                         0.5686274509803921))
-                 "#347291"
-                 )))
+                 "#347291")))
+
 
 (ert-deftest test-kurecolor-rgb-to-hsv ()
   "Test conversion of rgb to hsv."
@@ -221,6 +222,42 @@
 
                   (kurecolor-xcode-color-literal-to-hex-rgb
                    "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")))))
+
+(ert-deftest test-kurecolor-clamp ()
+  "Test clamp."
+  (let* ((list-of-numbers (number-sequence 0 100))
+         (min 1)
+         (max 10)
+         (clamped  (--map (kurecolor-clamp it min max) list-of-numbers))
+         (too-high (--select (> it 10) clamped))
+         (too-low (--select (< it 1) clamped)))
+    (should (equal 0 (length too-low)))
+    (should (equal 0 (length too-high)))))
+
+(ert-deftest test-kurecolor-hex-set-brightness-from ()
+  (let ((source "#000000")
+        (target "#00FF00"))
+    (should
+     (equal "#000000"
+       (kurecolor-hex-set-brightness-from source target)))))
+
+(ert-deftest test-kurecolor-hex-set-hue-from ()
+  (let ((source "#FF0000")
+        (target "#00FF00"))
+    (should
+     (equal "#FF0000"
+       (kurecolor-hex-set-hue-from source target)))))
+
+(ert-deftest test-kurecolor-hex-set-saturation-from ()
+  (let ((source "#000000")
+        (target "#00FF00"))
+    (should
+     (equal "#FFFFFF"
+       (kurecolor-hex-set-saturation-from source target)))
+
+    (should           ;;                        |
+     (equal "#FFBA7F" ;; expect rounding errors V.
+      (kurecolor-hex-set-saturation-from "#FFBB7F" "#FF7700")))))
 
 (provide 'kurecolor-test)
 
