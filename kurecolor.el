@@ -207,7 +207,7 @@ For example, to set the brightness on all colors in region to 50%.
          (let* ((a     (match-beginning 0))
                 (b     (match-end 0))
                 (color (match-string-no-properties 0))
-                (re-colored (funcall fn color arg)))
+                (re-colored (funcall func color arg)))
            (replace-string-in-region color re-colored a b)
            (goto-char b))))))
 
