@@ -10,7 +10,7 @@ instant feedback on color changes.
 
 ## Installing
 
-Installing kurecolor is recommended to be done via MELPA.
+Kurecolor is on MELPA, you can install using `package.el``
 
     M-x package-install kurecolor
 
@@ -96,7 +96,7 @@ Convert a `cssrgb` (or rgba) color to hex (alpha value is ignored).
 ### kurecolor-decrease-brightness-by-step
 
 Decrease brightness on hex color at point (or in region) by step.
-Accepts universal argument (X).
+Accepts universal argument (`x`).
 
 ```lisp
 (kurecolor-decrease-brightness-by-step (x))
@@ -107,7 +107,7 @@ Accepts universal argument (X).
 ### kurecolor-decrease-hue-by-step
 
 Decrease hue on hex color at point (or in region) by step.
-Accepts universal argument (X).
+Accepts universal argument (`x`).
 
 ```lisp
 (kurecolor-decrease-hue-by-step (x))
@@ -118,7 +118,7 @@ Accepts universal argument (X).
 ### kurecolor-decrease-saturation-by-step
 
 Decrease saturation on hex color at point (or in region) by step.
-Accepts universal argument (X).
+Accepts universal argument (`x`).
 
 ```lisp
 (kurecolor-decrease-saturation-by-step (x))
@@ -202,7 +202,7 @@ Insert a list of hexcolors of different hue.
 
 ### kurecolor-hex-rgb-at-point-or-region-to-xcode-color-literal
 
-Hex rgb to `xc`ode rgba color literal.
+Hex rgb to xcode rgba color literal.
 
 ```lisp
 (kurecolor-hex-rgb-at-point-or-region-to-xcode-color-literal)
@@ -212,7 +212,7 @@ Hex rgb to `xc`ode rgba color literal.
 
 ### kurecolor-hex-rgba-at-point-or-region-to-xcode-color-literal
 
-Hex rgba to `xc`ode rgba color literal.
+Hex rgba to xcode rgba color literal.
 
 ```lisp
 (kurecolor-hex-rgba-at-point-or-region-to-xcode-color-literal)
@@ -222,7 +222,7 @@ Hex rgba to `xc`ode rgba color literal.
 
 ### kurecolor-hex-rgba-to-xcode-color-literal
 
-Convert a hex `rgba` string to an `xc`ode color-literal.
+Convert a hex `rgba` string to an xcode color-literal.
 
 ```lisp
 (kurecolor-hex-rgba-to-xcode-color-literal (rgba))
@@ -243,7 +243,7 @@ Insert a list of hexcolors of different saturation (sat).
 
 ### kurecolor-hex-set-brightness
 
-Change a `hex` color`s brightness `val`, amount values from 0.0-1.0.
+Change a `hex` color's brightness `val`, amount values from 0.0-1.0.
 returns a 6 digit hex color.
 
 ```lisp
@@ -275,7 +275,7 @@ When region not active, act on the whole buffer.
 
 ### kurecolor-hex-set-hue
 
-Change a `hex` color`s `hue`, amount values from 0-1.
+Change a `hex` color's `hue`, amount values from 0-1.
 returns a 6 digit hex color.
 
 ```lisp
@@ -307,7 +307,7 @@ When region not active, act on the whole buffer.
 
 ### kurecolor-hex-set-saturation
 
-Change a `hex` color`s saturation `sat`, amount values from 0-1.
+Change a `hex` color's saturation `sat`, amount values from 0-1.
 returns a 6 digit hex color.
 
 ```lisp
@@ -431,8 +431,8 @@ Convert H S V to a 6 digit `hex` color.
 
 ### kurecolor-hsv-to-rgb
 
-Convert hsv (H S V) to red green blue.
-Note: args H S V are expected to be a values from 0..1
+Convert hsv (`h` `s` `v`) to red green blue.
+Note: args `h` `s` `v` are floats from 0.0..1.0
 
 ```lisp
 (kurecolor-hsv-to-rgb (h s v))
@@ -443,7 +443,7 @@ Note: args H S V are expected to be a values from 0..1
 ### kurecolor-increase-brightness-by-step
 
 Increase brightness on hex color at point (or in region) by step.
-Accepts universal argument (X).
+Accepts universal argument (`x`).
 
 ```lisp
 (kurecolor-increase-brightness-by-step (x))
@@ -454,7 +454,7 @@ Accepts universal argument (X).
 ### kurecolor-increase-hue-by-step
 
 Increase hue on hex color at point (or in region) by step.
-Accepts universal argument (X).
+Accepts universal argument (`x`).
 
 ```lisp
 (kurecolor-increase-hue-by-step (x))
@@ -465,7 +465,7 @@ Accepts universal argument (X).
 ### kurecolor-increase-saturation-by-step
 
 Increase saturation on hex color at point (or in region) by step.
-Accepts universal argument (X).
+Accepts universal argument (`x`).
 
 ```lisp
 (kurecolor-increase-saturation-by-step (x))
@@ -577,7 +577,7 @@ XCode color literal at point to hex rgba.
 
 ### kurecolor-xcode-color-literal-to-hex-rgb
 
-Convert an `xc`ode `color-literal` to a hex rgb string.
+Convert an xcode `color-literal` to a hex rgb string.
 
 ```lisp
 (kurecolor-xcode-color-literal-to-hex-rgb (color-literal))
@@ -587,7 +587,7 @@ Convert an `xc`ode `color-literal` to a hex rgb string.
 
 ### kurecolor-xcode-color-literal-to-hex-rgba
 
-Convert an `xc`ode `color-literal` to a hex rgba string.
+Convert an xcode `color-literal` to a hex rgba string.
 
 ```lisp
 (kurecolor-xcode-color-literal-to-hex-rgba (color-literal))
