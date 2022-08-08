@@ -234,19 +234,19 @@ When region not active, act on the whole buffer."
   "Adjust the SATURATION on all hex colors found in region.
 When region not active, act on the whole buffer."
   (interactive "nAdjust saturation (-1.0..1.0): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-adjust-saturation saturation))
+  (kurecolor--all-colors-in-region-apply 'kurecolor-adjust-saturation saturation))
 
 (defun kurecolor-hex-adjust-brightness-in-region (brightness)
   "Set the BRIGHTNESS of all hex colors found in region.
 When region not active, act on the whole buffer."
   (interactive "nAdjust brightness (-1.0..1.0): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-adjust-brightness brightness))
+  (kurecolor--all-colors-in-region-apply 'kurecolor-adjust-brightness brightness))
 
 (defun kurecolor-hex-adjust-hue-in-region (hue)
   "Set the HUE of all hex colors found in region (BEGIN END).
 When region not active, act on the whole buffer."
   (interactive "nAdjust hue for all colors (-360°..+360°): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-adjust-hue hue))
+  (kurecolor--all-colors-in-region-apply 'kurecolor-adjust-hue hue))
 
 (defun kurecolor-adjust-brightness (hex amount)
   "Adjust the HEX color brightness by AMOUNT 0.0-0.1."
