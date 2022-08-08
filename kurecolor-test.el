@@ -29,7 +29,9 @@
 (ert-deftest test-kurecolor-hex-to-cssrgba ()
   "Test conversion of hex to rgb css."
   (skip-unless (featurep 'kurecolor))
-  (should (equal (kurecolor-hex-to-cssrgba "#347291") "rgba(52, 114, 145, 1.0)")))
+  (should (equal (kurecolor-hex-to-cssrgba "#347291FF") "rgba(52, 114, 145, 1.0000)"))
+  (should (equal (kurecolor-hex-to-cssrgba "#34729100") "rgba(52, 114, 145, 0.0000)"))
+  (should (equal (kurecolor-hex-to-cssrgba "#34729180") "rgba(52, 114, 145, 0.5020)")))
 
 (ert-deftest test-kurecolor-cssrgb-to-hex ()
   "Test conversion of css rgb to hex."
@@ -68,6 +70,22 @@
                   0.20392156862745098
                   0.4470588235294118
                   0.5686274509803921))))
+
+(ert-deftest test-kurecolor-hex-to-rgba ()
+  "Test conversion of hex to rgb."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal (kurecolor-hex-to-rgba "#34729100")
+                 (list
+                  0.20392156862745098
+                  0.4470588235294118
+                  0.5686274509803921
+                  0.0)))
+  (should (equal (kurecolor-hex-to-rgba "#FFFFFFFF")
+               (list
+                1.0
+                1.0
+                1.0
+                1.0))))
 
 (ert-deftest test-kurecolor-hex-to-hsv ()
   "Test conversion of hex to hsv."
@@ -223,6 +241,18 @@
                   (kurecolor-xcode-color-literal-to-hex-rgb
                    "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")))))
 
+(ert-deftest test-kurecolor-hex-rgba-to-xcode-literal ()
+  "Test conversion of hex rgba string to XCode color literal."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal
+           (list  (kurecolor-hex-rgba-to-xcode-color-literal "#0E1B21FF")
+                  (kurecolor-hex-rgba-to-xcode-color-literal "#ECF3F600")
+                  (kurecolor-hex-rgba-to-xcode-color-literal "#ADC3CC80"))
+
+           (list "#colorLiteral(red: 0.0549019608, green: 0.1058823529, blue: 0.1294117647, alpha: 1.0000000000)"
+                 "#colorLiteral(red: 0.9254901961, green: 0.9529411765, blue: 0.9647058824, alpha: 0.0000000000)"
+                 "#colorLiteral(red: 0.6784313725, green: 0.7647058824, blue: 0.8000000000, alpha: 0.5019607843)"))))
+
 (ert-deftest test-kurecolor-clamp ()
   "Test clamp."
   (let* ((list-of-numbers (number-sequence 0 100))
@@ -230,7 +260,7 @@
          (max 10)
          (clamped  (--map (kurecolor-clamp it min max) list-of-numbers))
          (too-high (--select (> it 10) clamped))
-         (too-low (--select (< it 1) clamped)))
+         (too-low  (--select (< it 1) clamped)))
     (should (equal 0 (length too-low)))
     (should (equal 0 (length too-high)))))
 

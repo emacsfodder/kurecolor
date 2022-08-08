@@ -1,68 +1,23 @@
 ;;; kurecolor.el --- color editing goodies
-
+;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
-
-;;; Version: 1.2.9
-
+;;
+;;; Version: 1.3.0
+;;
+;;; Package-Requires: ((emacs "28.1") (s "1.12"))
+;;
 ;;; Commentary:
+;; A collection of tools aimed at those working with color, useful for CSS,
+;; Emacs themes, etc.
 ;;
-;; A collection of color tools aimed at those working with (normal 6
-;; digit) hex color codes, useful for CSS, Emacs themes, etc.
-;;
-;; View the presentation at https://github.com/emacsfodder/kurecolor
-;;
-;; ![](kurecolor.gif)
-;;
-;; Features include interactive step modification of hue, sat, val on
-;; hex colors.  Color conversion algorithms, for 6 digit hex colors,
-;; hsv, rgb, cssrgb.  Get/set h s v values from/for a color.
-;;
-;; It's recommend you use this in conjunction with rainbow-mode, for
+;; It's recommend you use kurekolor commands in conjunction with rainbow-mode, for
 ;; instant feedback on color changes.
-;;
-;; ### Doing cool things
-;;
-;; You can do funky things like adjust the saturation of all the
-;; colors in a selection, using macros.
-;;
-;; The presentation touches on this, and you'll need to get your
-;; keyboard macro skills out to really shine, but it's relatively
-;; simple.
-;;
-;; ### Step by step: Mass saturation decrease
-;; As per the animated presentation, these steps will demonstrate how to
-;; use Kurecolor interactive hsv adjusters with keyboard macros, to mass
-;; adjust colors.
-
-;; Add a few hex colors to your active buffer, or load up a css, code or
-;; simple text buffer, which already has some colors you'd like to tweak.
-;; Activate rainbow-mode.  (If you need to install rainbow-mode, grab it
-;; from ELPA.)
-
-;; After you have some colors ready to tweak, we're ready to try the
-;; following steps:
-;;
-;; 1. Select the region you want to modify
-;; 2. Narrow the buffer `M-x narrow-to-region`
-;; 3. Go to the top `M-<` of the narrowed section
-;; 4. Start recording a macro `f3`
-;;   1. Regexp i-search `C-M-s` for `#[0-9A-Fa-f]\{6\}` and `ENTER` on the first match
-;;   2. Your cursor point will be at the end of the first color (unless the Regexp was in-adequate :( )
-;;   3. `M-5` (to do 5 steps) `M-x kurecolor-decrease-saturation-by-step` (shortcut `M-x kure-d-sat` **TAB**)
-;; 5. Stop recording the macro `f4`
-;; 6. Run the macro again with `f4`, repeat until you are finished, or use `M-0 f4` to run the macro until it hits the end of the narrowed region (or hits an error).
-;; 8. When you're done, `M-x widen` to exit narrowing.
 ;;
 ;; ## Installing
 ;;
-;; Installing kurecolor is recommended to be done via MELPA.
+;; Kurecolor is on MELPA, you can install using `package.el`
 ;;
 ;;     M-x package-install kurecolor
-;;
-;; If you wish to install it manually, you already have your big boy
-;; pants on and need no further help from me.
-;;
-;; Enjoy!
 ;;
 ;; ### Tests
 ;;
@@ -70,7 +25,7 @@
 ;; kurecolor and kurecolor-test, and then do `M-x ert` (accept
 ;; `default`).
 ;;
-;; ### Ephemera
+;; ## Ephemera
 ;;
 ;; For those interested in such things, the name Kurecolor is
 ;; unashamedly nicked from a high end marker pen company.  Hopefully
@@ -87,19 +42,14 @@
 ;; gisted this a while back, you can get it from.
 ;; https://gist.github.com/jasonm23/8554119
 ;;
-;; The theme is Gruvbox, although you can't see much of it. Anyway,
-;; it's a great theme, you should go install it now. (from MELPA)
-
-;;; Package-Requires: ((emacs "24.1") (s "1.0"))
 
 ;;; Licence: MIT
-
 
 ;;; Code:
 
 (require 's)
 (eval-when-compile
-  (require 'cl-macs))
+  (require 'cl-lib))
 
 (unless (>= emacs-major-version 24)
   (error "Requires Emacs 24.1 or later"))
@@ -139,6 +89,20 @@
           (list (substring hex 0 2)
                 (substring hex 2 4)
                 (substring hex 4 6))))
+
+(defun kurecolor-hex-to-rgba (hex)
+  "Convert a 8 digit HEX color to r g b a."
+  (if (= (length hex) 9)
+   (let* ((hex (replace-regexp-in-string "#" "" hex))
+          (rgba (mapcar #'(lambda (s)
+                            (let ((n (string-to-number s 16)))
+                             (/ n 255.0)))
+                       (list (substring hex 0 2)
+                             (substring hex 2 4)
+                             (substring hex 4 6)
+                             (substring hex 6 8)))))
+     rgba)
+   (user-error "Hex color %s does not contain an alpha value")))
 
 (defun kurecolor-hex-to-hsv (hex)
   "Convert a 6 digit HEX color to h s v."
@@ -218,6 +182,71 @@ Replace with the return value of the function FN with ARGS"
       (setq replacement (funcall fn excerpt)))
     (delete-region pos1 pos2)
     (insert replacement)))
+
+(defun kurecolor--all-colors-in-region-apply (func arg)
+  "Use FUNC and ARG to modify all hex colors found in region.
+When region is not set, act on the whole buffer.
+
+For example, to set the brightness on all colors in region to 50%.
+
+```
+(kurecolor--all-colors-in-region-apply kurecolor-hex-set-brightness 0.5)
+```"
+  (let ((regexp "#[[:xdigit:]]\\{3,6\\}")
+        (pos (point))
+        (region-active (region-active-p))
+        (begin (if (region-active-p)
+                (region-beginning)
+                0))
+        (end (if (region-active-p)
+                 (region-end)
+                 (buffer-size))))
+    (save-mark-and-excursion
+       (when region-active (goto-char begin))
+       (while (ignore-errors (re-search-forward regexp end))
+         (let* ((a     (match-beginning 0))
+                (b     (match-end 0))
+                (color (match-string-no-properties 0))
+                (re-colored (funcall fn color arg)))
+           (replace-string-in-region color re-colored a b)
+           (goto-char b))))))
+
+(defun kurecolor-hex-set-saturation-in-region (saturation)
+  "Set the SATURATION of all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nSet saturation (0.0..1.0): ")
+  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-set-saturation saturation))
+
+(defun kurecolor-hex-set-brightness-in-region (brightness)
+  "Set the BRIGHTNESS of all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nSet brightness (0.0..1.0): ")
+  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-set-brightness brightness))
+
+(defun kurecolor-hex-set-hue-in-region (hue)
+  "Set the HUE of all hex colors found in region (BEGIN END).
+When region not active, act on the whole buffer."
+  (interactive "nSet hue for all colors (0°-360°): ")
+  (let ((hue (/ hue 360.0)))
+    (kurecolor--all-colors-in-region-apply 'kurecolor-hex-set-hue hue)))
+
+(defun kurecolor-hex-adjust-saturation-in-region (saturation)
+  "Adjust the SATURATION on all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nAdjust saturation (-1.0..1.0): ")
+  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-adjust-saturation saturation))
+
+(defun kurecolor-hex-adjust-brightness-in-region (brightness)
+  "Set the BRIGHTNESS of all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nAdjust brightness (-1.0..1.0): ")
+  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-adjust-brightness brightness))
+
+(defun kurecolor-hex-adjust-hue-in-region (hue)
+  "Set the HUE of all hex colors found in region (BEGIN END).
+When region not active, act on the whole buffer."
+  (interactive "nAdjust hue for all colors (-360°..+360°): ")
+  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-adjust-hue hue))
 
 (defun kurecolor-adjust-brightness (hex amount)
   "Adjust the HEX color brightness by AMOUNT 0.0-0.1."
@@ -305,7 +334,7 @@ returns a 6 digit hex color."
                (concat "rgba?(\s*"
                        "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
                        "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
-                       "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,?[^)]*)")
+                       "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,?.*?)")
                ;; For now we discard the alpha but we need to be aware
                ;; of its presence for the Rx to match rgba() colors.
                cssrgb))))
@@ -323,10 +352,14 @@ returns a 6 digit hex color."
     (format "rgb(%i, %i, %i)" r g b)))
 
 (defun kurecolor-hex-to-cssrgba (hex)
-  "Convert a HEX rgb color to css rgba (only with 1.0 alpha)."
-  (cl-destructuring-bind (r g b)
-      (mapcar 'kurecolor-to-8bit (kurecolor-hex-to-rgb hex))
-    (format "rgba(%i, %i, %i, 1.0)" r g b)))
+  "Convert a HEX rgba color to css rgba."
+  (cl-destructuring-bind (r g b a)
+      (kurecolor-hex-to-rgba hex)
+    (format "rgba(%i, %i, %i, %.4f)"
+            (kurecolor-to-8bit r)
+            (kurecolor-to-8bit g)
+            (kurecolor-to-8bit b)
+            a)))
 
 (defun kurecolor-xcode-color-literal-to-hex-rgba(color-literal)
   "Convert an XCode COLOR-LITERAL to a hex rgba string."
@@ -340,6 +373,14 @@ returns a 6 digit hex color."
                                  "#colorLiteral(red: \\(.*\\), green: \\(.*\\), blue: \\(.*\\), alpha: \\(.*\\))"
                                  color-literal)))))
     (format "#%02X%02X%02X%02X" red green blue alpha)))
+
+(defun kurecolor-hex-rgba-to-xcode-color-literal(rgba)
+  "Convert a hex RGBA string to an XCode color-literal."
+  (cl-destructuring-bind (r g b a)
+      (kurecolor-hex-to-rgba rgba)
+    (format
+     "#colorLiteral(red: %.10f, green: %.10f, blue: %.10f, alpha: %.10f)"
+     r g b a)))
 
 (defun kurecolor-xcode-color-literal-to-hex-rgb(color-literal)
   "Convert an XCode COLOR-LITERAL to a hex rgb string."
@@ -501,6 +542,18 @@ Opacity is always set to 1.0."
   "XCode color literal at point to hex rgb."
   (interactive)
   (kurecolor-replace-current 'kurecolor-xcode-color-literal-to-hex-rgb))
+
+;;;###autoload
+(defun kurecolor-hex-rgb-at-point-or-region-to-xcode-color-literal ()
+  "Hex rgb to XCode rgba color literal."
+  (interactive)
+  (kurecolor-replace-current 'kurecolor-hex-rgb-to-xcode-color-literal))
+
+;;;###autoload
+(defun kurecolor-hex-rgba-at-point-or-region-to-xcode-color-literal ()
+  "Hex rgba to XCode rgba color literal."
+  (interactive)
+  (kurecolor-replace-current 'kurecolor-hex-rgba-to-xcode-color-literal))
 
 (provide 'kurecolor)
 
