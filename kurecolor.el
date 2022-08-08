@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.3.1
+;;; Version: 1.3.2
 ;;
 ;;; Package-Requires: ((emacs "28.1") (s "1.12"))
 ;;
