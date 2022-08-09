@@ -10,7 +10,7 @@ instant feedback on color changes.
 
 ## Installing
 
-Kurecolor is on MELPA, you can install using `package.el``
+Kurecolor is on MELPA, you can install using `package.el`
 
     M-x package-install kurecolor
 
