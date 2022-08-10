@@ -185,8 +185,8 @@ Replace with the return value of the function FN with ARGS"
     (delete-region pos1 pos2)
     (insert replacement)))
 
-(defun kurecolor--all-colors-in-region-apply (func arg)
-  "Use FUNC and ARG to modify all hex colors found in region.
+(defun kurecolor--all-colors-in-region-apply (func &rest args)
+  "Use FUNC and ARGS to modify all hex colors found in region.
 When region is not set, act on the whole buffer.
 
 For example, to set the brightness on all colors in region to 50%.
@@ -209,7 +209,7 @@ For example, to set the brightness on all colors in region to 50%.
          (let* ((a     (match-beginning 0))
                 (b     (match-end 0))
                 (color (match-string-no-properties 0))
-                (re-colored (funcall func color arg)))
+                (re-colored (apply func `(,color ,@args))))
            (replace-string-in-region color re-colored a b)
            (goto-char b))))))
 
