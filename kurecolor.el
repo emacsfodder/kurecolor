@@ -185,14 +185,14 @@ Replace with the return value of the function FN with ARGS"
     (delete-region pos1 pos2)
     (insert replacement)))
 
-(defun kurecolor--all-colors-in-region-apply (func &rest args)
+(defun kurecolor--all-hex-colors-in-region-apply (func &rest args)
   "Use FUNC and ARGS to modify all hex colors found in region.
 When region is not set, act on the whole buffer.
 
 For example, to set the brightness on all colors in region to 50%.
 
 ```
-(kurecolor--all-colors-in-region-apply kurecolor-hex-set-brightness 0.5)
+(kurecolor--all-hex-colors-in-region-apply kurecolor-hex-set-brightness 0.5)
 ```"
   (let ((regexp "#[[:xdigit:]]\\{3,6\\}")
         (pos (point))
@@ -217,38 +217,38 @@ For example, to set the brightness on all colors in region to 50%.
   "Set the SATURATION of all hex colors found in region.
 When region not active, act on the whole buffer."
   (interactive "nSet saturation (0.0..1.0): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-set-saturation saturation))
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-saturation saturation))
 
 (defun kurecolor-hex-set-brightness-in-region (brightness)
   "Set the BRIGHTNESS of all hex colors found in region.
 When region not active, act on the whole buffer."
   (interactive "nSet brightness (0.0..1.0): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-hex-set-brightness brightness))
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-brightness brightness))
 
 (defun kurecolor-hex-set-hue-in-region (hue)
   "Set the HUE of all hex colors found in region (BEGIN END).
 When region not active, act on the whole buffer."
   (interactive "nSet hue for all colors (0°-360°): ")
   (let ((hue (/ hue 360.0)))
-    (kurecolor--all-colors-in-region-apply 'kurecolor-hex-set-hue hue)))
+    (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-hue hue)))
 
 (defun kurecolor-hex-adjust-saturation-in-region (saturation)
   "Adjust the SATURATION on all hex colors found in region.
 When region not active, act on the whole buffer."
   (interactive "nAdjust saturation (-1.0..1.0): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-adjust-saturation saturation))
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-saturation saturation))
 
 (defun kurecolor-hex-adjust-brightness-in-region (brightness)
   "Set the BRIGHTNESS of all hex colors found in region.
 When region not active, act on the whole buffer."
   (interactive "nAdjust brightness (-1.0..1.0): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-adjust-brightness brightness))
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-brightness brightness))
 
 (defun kurecolor-hex-adjust-hue-in-region (hue)
   "Set the HUE of all hex colors found in region (BEGIN END).
 When region not active, act on the whole buffer."
   (interactive "nAdjust hue for all colors (-360°..+360°): ")
-  (kurecolor--all-colors-in-region-apply 'kurecolor-adjust-hue hue))
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-hue hue))
 
 (defun kurecolor-adjust-brightness (hex amount)
   "Adjust the HEX color brightness by AMOUNT 0.0-0.1."
