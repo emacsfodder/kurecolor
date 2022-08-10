@@ -66,8 +66,7 @@
   "Test conversion of hex to rgb."
   (skip-unless (featurep 'kurecolor))
   (should (equal (kurecolor-hex-to-rgb "#347291")
-                 (list
-                  0.20392156862745098
+                '(0.20392156862745098
                   0.4470588235294118
                   0.5686274509803921))))
 
@@ -75,26 +74,24 @@
   "Test conversion of hex to rgb."
   (skip-unless (featurep 'kurecolor))
   (should (equal (kurecolor-hex-to-rgba "#34729100")
-                 (list
-                  0.20392156862745098
+                '(0.20392156862745098
                   0.4470588235294118
                   0.5686274509803921
                   0.0)))
+
   (should (equal (kurecolor-hex-to-rgba "#FFFFFFFF")
-               (list
-                1.0
-                1.0
-                1.0
-                1.0))))
+                 '(1.0
+                   1.0
+                   1.0
+                   1.0))))
 
 (ert-deftest test-kurecolor-hex-to-hsv ()
   "Test conversion of hex to hsv."
   (skip-unless (featurep 'kurecolor))
   (should (equal (kurecolor-hex-to-hsv "#347291")
-                 (list
-                  0.5555555555555556
-                  0.6413793103448275
-                  0.5686274509803921))))
+                 '(0.5555555555555556
+                   0.6413793103448275
+                   0.5686274509803921))))
 
 (ert-deftest test-kurecolor-hsv-to-hex ()
   "Test conversion of hsv hex."
@@ -109,26 +106,29 @@
   "Test conversion of rgb to hex."
   (skip-unless (featurep 'kurecolor))
   (should (equal (kurecolor-rgb-to-hex
-                  (list 0.20392156862745098
-                        0.4470588235294118
-                        0.5686274509803921))
+                  '(0.20392156862745098
+                    0.4470588235294118
+                    0.5686274509803921))
                  "#347291")))
-
 
 (ert-deftest test-kurecolor-rgb-to-hsv ()
   "Test conversion of rgb to hsv."
   (skip-unless (featurep 'kurecolor))
   (should (equal (kurecolor-hex-to-hsv "#347291")
-                 (list 0.5555555555555556
-                       0.6413793103448275
-                       0.5686274509803921))))
+                '(0.5555555555555556
+                  0.6413793103448275
+                  0.5686274509803921))))
 
 (ert-deftest test-kurecolor-hsv-to-rgb ()
   "Test conversion of hsv to rgb."
   (skip-unless (featurep 'kurecolor))
   (should (equal (kurecolor-hsv-to-rgb
-                  0.5555555555555556 0.6413793103448275 0.5686274509803921)
-                 (list 0.203921568627451 0.4470588235294117 0.5686274509803921))))
+                  0.5555555555555556
+                  0.6413793103448275
+                  0.5686274509803921)
+                '(0.203921568627451
+                  0.4470588235294117
+                  0.5686274509803921))))
 
 (ert-deftest test-kurecolor-hex-get-brightness ()
   "Test getting brightness from hex."
@@ -223,23 +223,33 @@
             "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.1294117647, alpha: 1)")
            "#0E1C20")))
 
-(ert-deftest test-kurecolor-multiple-xcode-literal-to-hex-rgb ()
+(ert-deftest test-kurecolor-multiple-xcode-literal-to-hex-rgba ()
   "Test conversion of XCode color literal to hex rgba string."
   (skip-unless (featurep 'kurecolor))
   (should (equal
+           `(,(kurecolor-xcode-color-literal-to-hex-rgba
+               "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
+             ,(kurecolor-xcode-color-literal-to-hex-rgba
+               "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
+             ,(kurecolor-xcode-color-literal-to-hex-rgba
+               "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)"))
+           '("#0E1B21FF"
+             "#ECF3F6FF"
+             "#ADC3CCFF"))))
 
-           (list "#0E1B21"
-                 "#ECF3F6"
-                 "#ADC3CC")
-
-           (list  (kurecolor-xcode-color-literal-to-hex-rgb
-                   "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
-
-                  (kurecolor-xcode-color-literal-to-hex-rgb
-                   "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
-
-                  (kurecolor-xcode-color-literal-to-hex-rgb
-                   "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")))))
+(ert-deftest test-kurecolor-multiple-xcode-literal-to-hex-rgb ()
+  "Test conversion of XCode color literal to hex rgb string."
+  (skip-unless (featurep 'kurecolor))
+  (should (equal
+           `(,(kurecolor-xcode-color-literal-to-hex-rgb
+               "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
+             ,(kurecolor-xcode-color-literal-to-hex-rgb
+               "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
+             ,(kurecolor-xcode-color-literal-to-hex-rgb
+               "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)"))
+           '("#0E1B21"
+             "#ECF3F6"
+             "#ADC3CC"))))
 
 (ert-deftest test-kurecolor-hex-rgba-to-xcode-literal ()
   "Test conversion of hex rgba string to XCode color literal."
@@ -248,7 +258,6 @@
            (list  (kurecolor-hex-rgba-to-xcode-color-literal "#0E1B21FF")
                   (kurecolor-hex-rgba-to-xcode-color-literal "#ECF3F600")
                   (kurecolor-hex-rgba-to-xcode-color-literal "#ADC3CC80"))
-
            (list "#colorLiteral(red: 0.0549019608, green: 0.1058823529, blue: 0.1294117647, alpha: 1.0000000000)"
                  "#colorLiteral(red: 0.9254901961, green: 0.9529411765, blue: 0.9647058824, alpha: 0.0000000000)"
                  "#colorLiteral(red: 0.6784313725, green: 0.7647058824, blue: 0.8000000000, alpha: 0.5019607843)"))))
@@ -284,7 +293,6 @@
     (should
      (equal "#FFFFFF"
        (kurecolor-hex-set-saturation-from source target)))
-
     (should           ;;                        |
      (equal "#FFBA7F" ;; expect rounding errors V.
       (kurecolor-hex-set-saturation-from "#FFBB7F" "#FF7700")))))

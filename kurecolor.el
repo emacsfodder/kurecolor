@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.3.2
+;;; Version: 1.3.3
 ;;
 ;;; Package-Requires: ((emacs "28.1") (s "1.12"))
 ;;
@@ -20,15 +20,15 @@
 ;;
 ;; ## Installing
 ;;
-;; Kurecolor is on MELPA, you can install using `package.el`
+;; Kurecolor is on MELPA, you can install using `package.el'
 ;;
 ;;     M-x package-install kurecolor
 ;;
 ;; ### Tests
 ;;
 ;; This package has a suite of unit tests.  To run them load both
-;; kurecolor and kurecolor-test, and then do `M-x ert` (accept
-;; `default`).
+;; kurecolor and kurecolor-test, and then do `M-x ert' (accept
+;; `default').
 ;;
 ;; ## Ephemera
 ;;
@@ -118,7 +118,7 @@
   "Replacement simple RGB to hex."
   (cl-destructuring-bind
       (red green blue)
-      (mapcar 'kurecolor-to-8bit   rgb)
+      (mapcar 'kurecolor-to-8bit rgb)
     (format "#%02X%02X%02X" red green blue)))
 
 (defun kurecolor-rgb-to-hsv (rgb)
@@ -148,9 +148,13 @@ For this module, h is returned as [0-1] instead of [0-360]."
             val))))
 
 (defun kurecolor-hsv-to-rgb (h s v)
-  "Convert hsv (H S V) to red green blue.
-Note: args H S V are expected to be a values from 0..1"
-  (let* ((i (floor (* h 6.0)))
+  "Convert hue H, saturation S, value V to `(red green blue)'.
+
+H S V will be clamped to values from 0.0..1.0"
+  (let* ((h (kurecolor-clamp h 0.0 1.0))
+         (s (kurecolor-clamp s 0.0 1.0))
+         (v (kurecolor-clamp v 0.0 1.0))
+         (i (floor (* h 6.0)))
          (f (- (* h 6.0) i))
          (p (* v (- 1.0 s)))
          (q (* v (- 1.0 (* f s))))
