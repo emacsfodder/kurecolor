@@ -1,8 +1,9 @@
 # Kurecolor
+
 A collection of tools aimed at those working with color, useful for CSS,
 Emacs themes, etc.
 
-[![MELPA](http://stable.melpa.org/packages/kurecolor-badge.svg)](http://melpa-stable.milkbox.net/#/kurecolor)
+[![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
 [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 
 It's recommend you use kurekolor commands in conjunction with rainbow-mode, for
@@ -15,6 +16,8 @@ Kurecolor is on MELPA, you can install using `package.el`
     M-x package-install kurecolor
 
 ## Functions
+
+...
 
 ### kurecolor--all-colors-in-region-apply
 
