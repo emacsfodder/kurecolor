@@ -15,8 +15,7 @@
 ;;[![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
 ;;[![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 ;;
-;; It's recommend you use kurekolor commands in conjunction with rainbow-mode, for
-;; instant feedback on color changes.
+;; When using kurecolor commands, we suggest using rainbow-mode for instant feedback on color changes.
 ;;
 ;; ## Installing
 ;;
@@ -111,7 +110,7 @@
   (kurecolor-rgb-to-hsv (kurecolor-hex-to-rgb hex)))
 
 (defun kurecolor-hsv-to-hex (h s v)
-  "Convert H S V to a 6 digit HEX color."
+  "Convert H S V to a 6 digit hex color."
   (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb h s v)))
 
 (defun kurecolor-rgb-to-hex (rgb)
