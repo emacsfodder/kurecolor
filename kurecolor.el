@@ -2,9 +2,11 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.3.4
+;;; Version: 1.3.5
 ;;
 ;;; Package-Requires: ((emacs "28.1") (s "1.12"))
+;;
+;;; Homepage: https://github.com/emacsfodder/kurecolor.el
 ;;
 ;;; Licence: MIT
 ;;
@@ -130,18 +132,18 @@ For this module, h is returned as [0-1] instead of [0-360]."
          (delta (- val (min red green blue)))
          (sat (if (cl-plusp val)
                   (/ delta val)
-                0))
+                0.0))
          (normalize #'(lambda
                         (constant right left)
-                        (let ((hue (+ constant (/ (* 60 (- right left)) delta))))
+                        (let ((hue (+ constant (/ (* 60.0 (- right left)) delta))))
                           (if (cl-minusp hue)
-                              (+ hue 360)
+                              (+ hue 360.0)
                             hue)))))
       (list (/ (cond
-                ((zerop sat) 0)
-                ((= red val) (funcall normalize 0 green blue)) ; dominant red
-                ((= green val) (funcall normalize 120 blue red)) ; dominant green
-                (t (funcall normalize 240 red green)))
+                ((zerop sat) 0.0)
+                ((= red val) (funcall normalize 0.0 green blue)) ; dominant red
+                ((= green val) (funcall normalize 120.0 blue red)) ; dominant green
+                (t (funcall normalize 240.0 red green)))
                360.0)
             sat
             val))))
@@ -250,21 +252,21 @@ When region not active, act on the whole buffer."
   (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-hue hue))
 
 (defun kurecolor-adjust-brightness (hex amount)
-  "Adjust the HEX color brightness by AMOUNT 0.0-0.1."
+  "Adjust the HEX color brightness by AMOUNT -1.0..1.0."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
-    (setq val (min 1.0 (+ amount val)))
+    (setq val (kurecolor-clamp (+ amount val) -1.0 1.0))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-adjust-saturation (hex amount)
-  "Adjust the HEX color saturation by AMOUNT 0.0-0.1."
+  "Adjust the HEX color saturation by AMOUNT -1.0..1.0."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
-    (setq sat (min 1.0 (+ sat amount)))
+    (setq sat (kurecolor-clamp (+ sat amount) -1.0 1.0))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-adjust-hue (hex amount)
-  "Adjust the HEX color hue by AMOUNT 0.0-0.1."
+  "Adjust the HEX color hue by AMOUNT 0.0-1.0."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
     (setq hue (mod (+ hue amount) 1.0))
     (kurecolor-rgb-to-hex
@@ -322,11 +324,11 @@ returns a 6 digit hex color."
 
 (defun kurecolor-clamp (num min max)
   "Clamp NUM to range of MIN MAX."
-  (if (< min num)
+  (if (< num min)
       min
-    (if (> max num)
-        max
-      num)))
+   (if (> num max)
+       max
+     num)))
 
 (defun kurecolor-cssrgb-to-hex (cssrgb)
   "Convert a CSSRGB (or rgba) color to hex (alpha value is ignored)."

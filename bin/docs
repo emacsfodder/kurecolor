@@ -6,9 +6,9 @@ emacs --batch \
   -eval "(add-to-list 'load-path \"${dash}\")" \
   -eval "(add-to-list 'load-path \"${s_el}\")" \
   -eval "(add-to-list 'load-path \".\")" \
+  -eval "(setq ettd-testing nil)" \
   -l ./ettd.el \
   -l dash \
   -l ./kurecolor.el \
-  -l ert \
   -l ./kurecolor-test.el \
-  --eval "(ert-run-tests-batch-and-exit)"
+  --eval "(create-docs-file \"doc-template\" \"docs.md\")"
