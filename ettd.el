@@ -53,29 +53,25 @@
       (setq examples (cdddr examples)))
     (nreverse result)))
 
-(if ettd-testing
-     (defmacro defexamples (cmd &rest examples)
-       "CMD and EXAMPLES to ert-deftests."
-       (declare (indent 1))
-       `(ert-deftest ,cmd ()
-          ,@(examples-to-should examples)))
+(defmacro defexamples (cmd &rest examples)
+  "CMD and EXAMPLES to ert-deftests."
+  (declare (indent 1))
+  (if ettd-testing
 
- (defmacro defexamples (cmd &rest examples)
-   "CMD and EXAMPLES to docs."
-   (declare (indent 1))
+   `(ert-deftest ,cmd ()
+      ,@(examples-to-should examples))
+
    `(add-to-list 'functions (list
                              ',cmd
                              (docs--signature (symbol-function ',cmd))
                              (docs--docstring (symbol-function ',cmd))
                              (examples-to-strings ',examples)))))
 
-(if ettd-testing
-     (defun def-example-group (&rest _)
-       "Simple container for examples.")
-
- (defmacro def-example-group (group &rest examples)
-   "GROUP of EXAMPLES for docs."
-   (declare (indent 1))
+(defmacro def-example-group (group &rest examples)
+  "GROUP of EXAMPLES for docs."
+  (declare (indent 1))
+  (if ettd-testing
+      `(progn ,@examples)
    `(progn
       (add-to-list 'functions ,group)
       ,@examples)))
