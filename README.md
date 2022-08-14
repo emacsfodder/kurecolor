@@ -1,11 +1,12 @@
 # Kurecolor
+
 A collection of tools aimed at those working with color, useful for CSS,
 Emacs themes, etc.
 
 [![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
 [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 
-When using kurecolor commands, we suggest using rainbow-mode for instant feedback on color changes.
+When using kurecolor commands, I suggest using rainbow-mode for instant feedback on color changes.
 
 ## Installing
 
@@ -13,649 +14,476 @@ Kurecolor is on MELPA, you can install using `package.el`
 
     M-x package-install kurecolor
 
- - - -
-## Functions
-
-### kurecolor--all-hex-colors-in-region-apply
-
-Use `func` and `args` to modify all hex colors found in region.
-When region is not set, act on the whole buffer.
-
-For example, to set the brightness on all colors in region to 50%.
-
-```
-(kurecolor--all-hex-colors-in-region-apply kurecolor-hex-set-brightness 0.5)
-```
-
-<sup>function signature</sup>
-```lisp
-(kurecolor--all-hex-colors-in-region-apply (func &rest args))
-```
-
 - - -
 
-### kurecolor-adjust-brightness
+### Utility functions
 
-Adjust the `hex` color brightness by `amount` 0.0-0.1.
+* [kurecolor-clamp](#kurecolor-clamp-num-min-max) `(num min max)`
+* [kurecolor-to-8bit](#kurecolor-to-8bit-n) `(n)`
+* [kurecolor-interpolate](#kurecolor-interpolate-color1-color2) `(color1 color2)`
 
-<sup>function signature</sup>
-```lisp
-(kurecolor-adjust-brightness (hex amount))
-```
+### CSS helpers
 
-- - -
+* [kurecolor-hex-to-cssrgb](#kurecolor-hex-to-cssrgb-hex) `(hex)`
+* [kurecolor-hex-to-cssrgba](#kurecolor-hex-to-cssrgba-hex) `(hex)`
+* [kurecolor-cssrgb-to-hex](#kurecolor-cssrgb-to-hex-cssrgb-optional-hexrgba) `(cssrgb &optional hexrgba)`
+* [kurecolor-css-rgb-value-to-number](#kurecolor-css-rgb-value-to-number-string) `(string)`
 
-### kurecolor-adjust-hue
+### Absolute set hue, saturation, brightness
 
-Adjust the `hex` color hue by `amount` 0.0-0.1.
+* [kurecolor-hex-set-hue](#kurecolor-hex-set-hue-hex-hue) `(hex hue)`
+* [kurecolor-hex-set-sat](#kurecolor-hex-set-sat-nil) `nil`
+* [kurecolor-hex-set-brightness](#kurecolor-hex-set-brightness-hex-val) `(hex val)`
 
-<sup>function signature</sup>
-```lisp
-(kurecolor-adjust-hue (hex amount))
-```
+### Set hue, saturation, brightness from another hex color
 
-- - -
+* [kurecolor-hex-set-brightness-from](#kurecolor-hex-set-brightness-from-source-target) `(source target)`
+* [kurecolor-hex-set-hue-from](#kurecolor-hex-set-hue-from-source-target) `(source target)`
+* [kurecolor-hex-set-saturation-from](#kurecolor-hex-set-saturation-from-source-target) `(source target)`
 
-### kurecolor-adjust-saturation
+### RGB Hex to rgb
 
-Adjust the `hex` color saturation by `amount` 0.0-0.1.
+* [kurecolor-hex-to-rgb](#kurecolor-hex-to-rgb-hex) `(hex)`
 
-<sup>function signature</sup>
-```lisp
-(kurecolor-adjust-saturation (hex amount))
-```
+### RGBA Hex to rgba
 
-- - -
+* [kurecolor-hex-to-rgba](#kurecolor-hex-to-rgba-hex) `(hex)`
 
-### kurecolor-clamp
+### HSV/RGB/HEX (RGB) conversion
+
+* [kurecolor-hex-to-hsv](#kurecolor-hex-to-hsv-hex) `(hex)`
+* [kurecolor-hsv-to-hex](#kurecolor-hsv-to-hex-h-s-v) `(h s v)`
+* [kurecolor-hex-to-hsv](#kurecolor-hex-to-hsv-hex) `(hex)`
+* [kurecolor-hsv-to-rgb](#kurecolor-hsv-to-rgb-h-s-v) `(h s v)`
+* [kurecolor-rgb-to-hex](#kurecolor-rgb-to-hex-rgb) `(rgb)`
+
+### Get hue, saturation, brightness
+
+* [kurecolor-hex-get-brightness](#kurecolor-hex-get-brightness-hex) `(hex)`
+* [kurecolor-hex-get-saturation](#kurecolor-hex-get-saturation-hex) `(hex)`
+* [kurecolor-hex-get-hue](#kurecolor-hex-get-hue-hex) `(hex)`
+
+### Color adjust
+
+* [kurecolor-adjust-saturation](#kurecolor-adjust-saturation-hex-amount) `(hex amount)`
+* [kurecolor-adjust-brightness](#kurecolor-adjust-brightness-hex-amount) `(hex amount)`
+* [kurecolor-adjust-hue](#kurecolor-adjust-hue-hex-amount) `(hex amount)`
+
+### XCode color literal helpers
+
+* [kurecolor-hex-rgba-to-xcode-color-literal](#kurecolor-hex-rgba-to-xcode-color-literal-rgba) `(rgba)`
+* [kurecolor-xcode-literal-to-hex-rgba](#kurecolor-xcode-literal-to-hex-rgba-nil) `nil`
+* [kurecolor-xcode-literal-to-hex-rgb](#kurecolor-xcode-literal-to-hex-rgb-nil) `nil`
+* [kurecolor-xcode-literal-to-hex-rgba](#kurecolor-xcode-literal-to-hex-rgba-nil) `nil`
+* [kurecolor-xcode-literal-to-hex-rgb](#kurecolor-xcode-literal-to-hex-rgb-nil) `nil`
+
+
+### kurecolor-clamp `(num min max)`
 
 Clamp `num` to range of `min` `max`.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-clamp (num min max))
+(kurecolor-clamp 1 -1.0 1.0)
+ ⇒ 1
+(kurecolor-clamp 2 -1.0 1.0)
+ ⇒ 1.0
+(kurecolor-clamp -2 -1.0 1.0)
+ ⇒ -1.0
 ```
 
-- - -
+### kurecolor-to-8bit `(n)`
 
-### kurecolor-cssrgb-at-point-or-region-to-hex [command]
+Convert `n` (`0.0-1.0`) to `0-255`.
 
-CSS rgb color at point or region to hex rgb.
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-cssrgb-at-point-or-region-to-hex)
+(kurecolor-to-8bit 0)
+ ⇒ 0.0
+(kurecolor-to-8bit 1)
+ ⇒ 255.0
+(kurecolor-to-8bit 0.3231)
+ ⇒ 82.3905
 ```
 
-- - -
+### kurecolor-interpolate `(color1 color2)`
 
-### kurecolor-cssrgb-to-hex
+Interpolate two hex colors `color1` and `color2`, to get their mixed color.
 
-Convert a `cssrgb` (or rgba) color to hex (alpha value is ignored).
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-cssrgb-to-hex (cssrgb))
+(kurecolor-interpolate "#FFFFFF" "#000000")
+ ⇒ "#7F7F7F"
+(kurecolor-interpolate "#0077FF" "#111111")
+ ⇒ "#084488"
+(kurecolor-interpolate "#FF7700" "#111111")
+ ⇒ "#884408"
 ```
 
-- - -
 
-### kurecolor-decrease-brightness-by-step [command]
+### kurecolor-hex-to-cssrgb `(hex)`
 
-Decrease brightness on hex color at point (or in region) by step.
-Accepts universal argument (`x`).
+Convert a `hex` rgb color to css rgb.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-decrease-brightness-by-step (x))
+(kurecolor-hex-to-cssrgb "#347291")
+ ⇒ "rgb(52, 114, 145)"
+(kurecolor-hex-to-cssrgb "#000000")
+ ⇒ "rgb(0, 0, 0)"
+(kurecolor-hex-to-cssrgb "#888888")
+ ⇒ "rgb(136, 136, 136)"
 ```
 
-- - -
+### kurecolor-hex-to-cssrgba `(hex)`
 
-### kurecolor-decrease-hue-by-step [command]
+Convert a `hex` rgba color to css rgba.
 
-Decrease hue on hex color at point (or in region) by step.
-Accepts universal argument (`x`).
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-decrease-hue-by-step (x))
+(kurecolor-hex-to-cssrgba "#347291FF")
+ ⇒ "rgba(52, 114, 145, 1.0000)"
+(kurecolor-hex-to-cssrgba "#34729100")
+ ⇒ "rgba(52, 114, 145, 0.0000)"
+(kurecolor-hex-to-cssrgba "#34729180")
+ ⇒ "rgba(52, 114, 145, 0.5020)"
 ```
 
-- - -
+### kurecolor-cssrgb-to-hex `(cssrgb &optional hexrgba)`
 
-### kurecolor-decrease-saturation-by-step [command]
+Convert a `cssrgb` (`rgb()` or `rgba()`) color to hex.
 
-Decrease saturation on hex color at point (or in region) by step.
-Accepts universal argument (`x`).
+When `hexrgba` is non-nil the hex color string will be `rgba`.
+If css `alpha` value isn't present, it will be set as `1.0`
+(i.e. no transparency)
 
-<sup>function signature</sup>
+Valid css `rgb()` `rgba()` values are supported.
+
 ```lisp
-(kurecolor-decrease-saturation-by-step (x))
+(kurecolor-cssrgb-to-hex "rgb(10%, 20%, 90%)")
+ ⇒ "#1933E5"
+(kurecolor-cssrgb-to-hex "rgba(100%, 100%, 100%, 1.0)")
+ ⇒ "#FFFFFF"
+(kurecolor-cssrgb-to-hex "rgb(52, 114, 145)")
+ ⇒ "#347291"
 ```
 
-- - -
+### kurecolor-css-rgb-value-to-number `(string)`
 
-### kurecolor-hex-adjust-brightness-in-region [command]
+Convert `string` (css `rgb()'/`rgba()` `r`, `g`, `b` values) to a number from `0-255`.
 
-Set the `brightness` of all hex colors found in region.
-When region not active, act on the whole buffer.
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-adjust-brightness-in-region (brightness))
+(kurecolor-css-rgb-value-to-number "10")
+ ⇒ 10
+(kurecolor-css-rgb-value-to-number "10%")
+ ⇒ 25.5
+(kurecolor-css-rgb-value-to-number "100%")
+ ⇒ 255.0
 ```
 
-- - -
 
-### kurecolor-hex-adjust-hue-in-region [command]
-
-Set the `hue` of all hex colors found in region (BEGIN END).
-When region not active, act on the whole buffer.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-adjust-hue-in-region (hue))
-```
-
-- - -
-
-### kurecolor-hex-adjust-saturation-in-region [command]
-
-Adjust the `saturation` on all hex colors found in region.
-When region not active, act on the whole buffer.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-adjust-saturation-in-region (saturation))
-```
-
-- - -
-
-### kurecolor-hex-get-brightness
-
-Get the brightness of `hex` color.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-get-brightness (hex))
-```
-
-- - -
-
-### kurecolor-hex-get-hue
-
-Get the hue of `hex` color.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-get-hue (hex))
-```
-
-- - -
-
-### kurecolor-hex-get-saturation
-
-Get the saturation of `hex` color.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-get-saturation (hex))
-```
-
-- - -
-
-### kurecolor-hex-hue-group [command]
-
-Given a `hex` color.
-Insert a list of hexcolors of different hue.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-hue-group (hex))
-```
-
-- - -
-
-### kurecolor-hex-rgb-at-point-or-region-to-xcode-color-literal [command]
-
-Hex rgb to XCode rgba color literal.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-rgb-at-point-or-region-to-xcode-color-literal)
-```
-
-- - -
-
-### kurecolor-hex-rgba-at-point-or-region-to-xcode-color-literal [command]
-
-Hex rgba to XCode rgba color literal.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-rgba-at-point-or-region-to-xcode-color-literal)
-```
-
-- - -
-
-### kurecolor-hex-rgba-to-xcode-color-literal
-
-Convert a hex `rgba` string to an XCode color-literal.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-rgba-to-xcode-color-literal (rgba))
-```
-
-- - -
-
-### kurecolor-hex-sat-group [command]
-
-Given a `hex` color.
-Insert a list of hexcolors of different saturation (sat).
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-sat-group (hex))
-```
-
-- - -
-
-### kurecolor-hex-set-brightness
-
-Change a `hex` color's brightness `val`, amount values from 0.0-1.0.
-returns a 6 digit hex color.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-set-brightness (hex val))
-```
-
-- - -
-
-### kurecolor-hex-set-brightness-from
-
-Copy brightness from `source` to `target`.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-set-brightness-from (source target))
-```
-
-- - -
-
-### kurecolor-hex-set-brightness-in-region [command]
-
-Set the `brightness` of all hex colors found in region.
-When region not active, act on the whole buffer.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-set-brightness-in-region (brightness))
-```
-
-- - -
-
-### kurecolor-hex-set-hue
+### kurecolor-hex-set-hue `(hex hue)`
 
 Change a `hex` color's `hue`, amount values from 0-1.
 returns a 6 digit hex color.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-set-hue (hex hue))
+(kurecolor-hex-set-hue "#FF7700" 0.5)
+ ⇒ "#00FFFF"
+(kurecolor-hex-set-hue "#FF00FF" 0.5)
+ ⇒ "#00FFFF"
+(kurecolor-hex-set-hue "#FFFF00" 0.5)
+ ⇒ "#00FFFF"
 ```
 
-- - -
+### kurecolor-hex-set-sat 
 
-### kurecolor-hex-set-hue-from
+
+
+```lisp
+(kurecolor-hex-set-saturation "#FF7700" 0.5)
+ ⇒ "#FFBB7F"
+(kurecolor-hex-set-saturation "#007700" 0.5)
+ ⇒ "#3B773B"
+(kurecolor-hex-set-saturation "#FF0000" 0.5)
+ ⇒ "#FF7F7F"
+```
+
+### kurecolor-hex-set-brightness `(hex val)`
+
+Change a `hex` color's brightness `val`, amount values from 0.0-1.0.
+returns a 6 digit hex color.
+
+```lisp
+(kurecolor-hex-set-brightness "#FF7700" 0.5)
+ ⇒ "#7F3B00"
+(kurecolor-hex-set-brightness "#FF0000" 0.5)
+ ⇒ "#7F0000"
+(kurecolor-hex-set-brightness "#FF0077" 0.5)
+ ⇒ "#7F003B"
+```
+
+
+### kurecolor-hex-set-brightness-from `(source target)`
 
 Copy brightness from `source` to `target`.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-set-hue-from (source target))
+(kurecolor-hex-set-brightness-from "#008800" "#000000")
+ ⇒ "#888888"
+(kurecolor-hex-set-brightness-from "#00FF00" "#000000")
+ ⇒ "#FFFFFF"
+(kurecolor-hex-set-brightness-from "#000000" "#00FF00")
+ ⇒ "#000000"
 ```
 
-- - -
+### kurecolor-hex-set-hue-from `(source target)`
 
-### kurecolor-hex-set-hue-in-region [command]
+Copy brightness from `source` to `target`.
 
-Set the `hue` of all hex colors found in region (BEGIN END).
-When region not active, act on the whole buffer.
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-set-hue-in-region (hue))
+(kurecolor-hex-set-hue-from "#FF0000" "#00FF00")
+ ⇒ "#FF0000"
+(kurecolor-hex-set-hue-from "#00FF00" "#FF0000")
+ ⇒ "#00FF00"
+(kurecolor-hex-set-hue-from "#0088FF" "#880000")
+ ⇒ "#004888"
 ```
 
-- - -
-
-### kurecolor-hex-set-saturation
-
-Change a `hex` color's saturation `sat`, amount values from 0-1.
-returns a 6 digit hex color.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-set-saturation (hex sat))
-```
-
-- - -
-
-### kurecolor-hex-set-saturation-from
+### kurecolor-hex-set-saturation-from `(source target)`
 
 Copy the saturation of `source` to `target`.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-set-saturation-from (source target))
+(kurecolor-hex-set-saturation-from "#000000" "#00FF00")
+ ⇒ "#FFFFFF"
+(kurecolor-hex-set-saturation-from "#004400" "#00FF00")
+ ⇒ "#00FF00"
+(kurecolor-hex-set-saturation-from "#FFBB7F" "#FF7700")
+ ⇒ "#FFBA7F"
 ```
 
-- - -
 
-### kurecolor-hex-set-saturation-in-region [command]
-
-Set the `saturation` of all hex colors found in region.
-When region not active, act on the whole buffer.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-set-saturation-in-region (saturation))
-```
-
-- - -
-
-### kurecolor-hex-to-cssrgb
-
-Convert a `hex` rgb color to cssrgb.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-to-cssrgb (hex))
-```
-
-- - -
-
-### kurecolor-hex-to-cssrgba
-
-Convert a `hex` rgba color to css rgba.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-to-cssrgba (hex))
-```
-
-- - -
-
-### kurecolor-hex-to-hsv
-
-Convert a 6 digit `hex` color to h s v.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hex-to-hsv (hex))
-```
-
-- - -
-
-### kurecolor-hex-to-rgb
+### kurecolor-hex-to-rgb `(hex)`
 
 Convert a 6 digit `hex` color to r g b.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-to-rgb (hex))
+(kurecolor-hex-to-rgb "#347291")
+ ⇒ '(0.20392156862745098 0.4470588235294118 0.5686274509803921)
+(kurecolor-hex-to-rgb "#72FF91")
+ ⇒ '(0.4470588235294118 1.0 0.5686274509803921)
+(kurecolor-hex-to-rgb "#720091")
+ ⇒ '(0.4470588235294118 0.0 0.5686274509803921)
 ```
 
-- - -
 
-### kurecolor-hex-to-rgba
+### kurecolor-hex-to-rgba `(hex)`
 
 Convert a 8 digit `hex` color to r g b a.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-to-rgba (hex))
+(kurecolor-hex-to-rgba "#34729100")
+ ⇒ '(0.20392156862745098 0.4470588235294118 0.5686274509803921 0.0)
+(kurecolor-hex-to-rgba "#FFFFFFFF")
+ ⇒ '(1.0 1.0 1.0 1.0)
+(kurecolor-hex-to-rgba "#72009172")
+ ⇒ '(0.4470588235294118 0.0 0.5686274509803921 0.4470588235294118)
 ```
 
-- - -
 
-### kurecolor-hex-val-group [command]
+### kurecolor-hex-to-hsv `(hex)`
 
-Given a `hex` color.
-Insert a list of hexcolors of different brightness (val).
+Convert a 6 digit `hex` color to h s v.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hex-val-group (hex))
+(kurecolor-hex-to-hsv "#347291")
+ ⇒ '(0.5555555555555556 0.6413793103448275 0.5686274509803921)
+(kurecolor-hex-to-hsv "#729134")
+ ⇒ '(0.6413793103448275 0.5686274509803921 0.5555555555555556)
+(kurecolor-hex-to-hsv "#913472")
+ ⇒ '(0.5686274509803921 0.5555555555555556 0.6413793103448275)
 ```
 
-- - -
-
-### kurecolor-hexcolor-at-point-or-region-to-css-rgb [command]
-
-Hex rgb color at point or region to css rgb color.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hexcolor-at-point-or-region-to-css-rgb)
-```
-
-- - -
-
-### kurecolor-hexcolor-at-point-or-region-to-css-rgba [command]
-
-Hex rgb color at point or region to css rgba.
-Opacity is always set to 1.0.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-hexcolor-at-point-or-region-to-css-rgba)
-```
-
-- - -
-
-### kurecolor-hsv-to-hex
+### kurecolor-hsv-to-hex `(h s v)`
 
 Convert `h` `s` `v` to a 6 digit hex color.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hsv-to-hex (h s v))
+(kurecolor-hsv-to-hex 0.5555555555555556 0.65 0.5686274509803921)
+ ⇒ "#327191"
+(kurecolor-hsv-to-hex 1.0 0.7 1.0)
+ ⇒ "#FF4C4C"
+(kurecolor-hsv-to-hex 0.5 0.5 0.6)
+ ⇒ "#4C9999"
 ```
 
-- - -
+### kurecolor-hex-to-hsv `(hex)`
 
-### kurecolor-hsv-to-rgb
+Convert a 6 digit `hex` color to h s v.
 
-Convert hue `h`, saturation `s`, value `v` to `(red green blue)`.
-
-`h` `s` `v` will be clamped to values from 0.0..1.0
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-hsv-to-rgb (h s v))
+(kurecolor-hex-to-hsv "#347291")
+ ⇒ '(0.5555555555555556 0.6413793103448275 0.5686274509803921)
 ```
 
-- - -
+### kurecolor-hsv-to-rgb `(h s v)`
 
-### kurecolor-increase-brightness-by-step [command]
+Convert hsv (`h` `s` `v`) to red green blue.
+Note: args `h` `s` `v` are expected to be a values from 0..1
 
-Increase brightness on hex color at point (or in region) by step.
-Accepts universal argument (`x`).
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-increase-brightness-by-step (x))
+(kurecolor-hsv-to-rgb 0.5555555555555556 0.6413793103448275 0.5686274509803921)
+ ⇒ '(0.203921568627451 0.4470588235294117 0.5686274509803921)
 ```
 
-- - -
-
-### kurecolor-increase-hue-by-step [command]
-
-Increase hue on hex color at point (or in region) by step.
-Accepts universal argument (`x`).
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-increase-hue-by-step (x))
-```
-
-- - -
-
-### kurecolor-increase-saturation-by-step [command]
-
-Increase saturation on hex color at point (or in region) by step.
-Accepts universal argument (`x`).
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-increase-saturation-by-step (x))
-```
-
-- - -
-
-### kurecolor-interpolate
-
-Interpolate two hex colors `color1` and `color2`, to get their mixed color.
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-interpolate (color1 color2))
-```
-
-- - -
-
-### kurecolor-replace-current
-
-Get the current unspaced string at point.
-Replace with the return value of the function `fn` with `args`
-
-<sup>function signature</sup>
-```lisp
-(kurecolor-replace-current (fn &rest args))
-```
-
-- - -
-
-### kurecolor-rgb-to-hex
+### kurecolor-rgb-to-hex `(rgb)`
 
 Replacement simple `rgb` to hex.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-rgb-to-hex (rgb))
+(kurecolor-rgb-to-hex '(0.20392156862745098 0.4470588235294118 0.5686274509803921))
+ ⇒ "#347291"
 ```
 
-- - -
 
-### kurecolor-rgb-to-hsv
+### kurecolor-hex-get-brightness `(hex)`
 
-Convert `rgb`, a list of (r g b) to list (h s v).
-For this module, h is returned as [0-1] instead of [0-360].
+Get the brightness of `hex` color.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-rgb-to-hsv (rgb))
+(kurecolor-hex-get-brightness "#FFFFFF")
+ ⇒ 1.0
+(kurecolor-hex-get-brightness "#808080")
+ ⇒ 0.5019607843137255
+(kurecolor-hex-get-brightness "#000000")
+ ⇒ 0.0
 ```
 
-- - -
+### kurecolor-hex-get-saturation `(hex)`
 
-### kurecolor-set-brightness [command]
+Get the saturation of `hex` color.
 
-Interactively change a `color`'s `brightness`.
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-set-brightness (color brightness))
+(kurecolor-hex-get-saturation "#00FF00")
+ ⇒ 1.0
+(kurecolor-hex-get-saturation "#7FFF7F")
+ ⇒ 0.5019607843137255
+(kurecolor-hex-get-saturation "#000000")
+ ⇒ 0.0
 ```
 
-- - -
+### kurecolor-hex-get-hue `(hex)`
 
-### kurecolor-set-hue [command]
+Get the hue of `hex` color.
 
-Interactively change a `color`'s `hue`.
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-set-hue (color hue))
+(kurecolor-hex-get-hue "#FF0000")
+ ⇒ 0.0
+(kurecolor-hex-get-hue "#00FF00")
+ ⇒ 0.3333333333333333
+(kurecolor-hex-get-hue "#0000FF")
+ ⇒ 0.6666666666666666
 ```
 
-- - -
 
-### kurecolor-set-saturation [command]
+### kurecolor-adjust-saturation `(hex amount)`
 
-Interactively change a `color`'s `saturation`.
+Adjust the `hex` color saturation by `amount` -1.0..1.0.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-set-saturation (color saturation))
+(kurecolor-adjust-saturation "#006091" -0.1)
+ ⇒ "#0E6491"
+(kurecolor-adjust-saturation "#006091" -0.2)
+ ⇒ "#1C6991"
+(kurecolor-adjust-saturation "#006091" -0.5)
+ ⇒ "#487891"
 ```
 
-- - -
+### kurecolor-adjust-brightness `(hex amount)`
 
-### kurecolor-to-8bit
+Adjust the `hex` color brightness by `amount` -1.0..1.0.
 
-Convert `n` (0.0-1.0) to 0-255.
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-to-8bit (n))
+(kurecolor-adjust-brightness "#FFFFFF" -0.1)
+ ⇒ "#E5E5E5"
+(kurecolor-adjust-brightness "#FFFFFF" -0.2)
+ ⇒ "#CCCCCC"
+(kurecolor-adjust-brightness "#FFFFFF" -0.5)
+ ⇒ "#7F7F7F"
 ```
 
-- - -
+### kurecolor-adjust-hue `(hex amount)`
 
-### kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgb [command]
+Adjust the `hex` color hue by `amount` 0.0-1.0.
 
-XCode color literal at point to hex rgb.
-
-<sup>function signature</sup>
 ```lisp
-(kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgb)
+(kurecolor-adjust-hue "#FF0000" -0.1)
+ ⇒ "#FF0098"
+(kurecolor-adjust-hue "#FF7700" -0.2)
+ ⇒ "#FF00BB"
+(kurecolor-adjust-hue "#FFFF00" -0.5)
+ ⇒ "#0000FF"
 ```
 
-- - -
 
-### kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgba [command]
+### kurecolor-hex-rgba-to-xcode-color-literal `(rgba)`
 
-XCode color literal at point to hex rgba.
+Convert a hex `rgba` string to an XCode color-literal.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgba)
+(kurecolor-hex-rgba-to-xcode-color-literal "#0E1B21FF")
+ ⇒ "#colorLiteral(red: 0.0549019608, green: 0.1058823529, blue: 0.1294117647, alpha: 1.0000000000)"
+(kurecolor-hex-rgba-to-xcode-color-literal "#ECF3F600")
+ ⇒ "#colorLiteral(red: 0.9254901961, green: 0.9529411765, blue: 0.9647058824, alpha: 0.0000000000)"
+(kurecolor-hex-rgba-to-xcode-color-literal "#ADC3CC80")
+ ⇒ "#colorLiteral(red: 0.6784313725, green: 0.7647058824, blue: 0.8000000000, alpha: 0.5019607843)"
 ```
 
-- - -
+### kurecolor-xcode-literal-to-hex-rgba 
 
-### kurecolor-xcode-color-literal-to-hex-rgb
 
-Convert an XCode `color-literal` to a hex rgb string.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-xcode-color-literal-to-hex-rgb (color-literal))
+(kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
+ ⇒ "#163242FF"
 ```
 
-- - -
+### kurecolor-xcode-literal-to-hex-rgb 
 
-### kurecolor-xcode-color-literal-to-hex-rgba
 
-Convert an XCode `color-literal` to a hex rgba string.
 
-<sup>function signature</sup>
 ```lisp
-(kurecolor-xcode-color-literal-to-hex-rgba (color-literal))
+(kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.1294117647, alpha: 1)")
+ ⇒ "#0E1C20"
 ```
 
-- - -
+### kurecolor-xcode-literal-to-hex-rgba 
 
-### Tests
 
-This package has a suite of unit tests.  To run them load both
-kurecolor and kurecolor-test, and then do `M-x ert` (accept
-`default`).
+
+```lisp
+(kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
+ ⇒ "#0E1B21FF"
+(kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
+ ⇒ "#ECF3F6FF"
+(kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
+ ⇒ "#ADC3CCFF"
+```
+
+### kurecolor-xcode-literal-to-hex-rgb 
+
+
+
+```lisp
+(kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
+ ⇒ "#0E1B21"
+(kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
+ ⇒ "#ECF3F6"
+(kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
+ ⇒ "#ADC3CC"
+```
+
+
+### Test/Examples
+
+The examples documented here are live tests (in `kurecolor-examples.el`). You can
+run them using `bin/test` from the package folder.`
 
 ## Ephemera
 
@@ -666,11 +494,10 @@ to change it due to some frivilous and paranoid law
 suit. (seriously guys, this is just free advertising.)
 
 I have not been pressured into saying this, however, Kurecolor
-markers and art supplies are best best!  Buy some NOW (Like REALLY
+markers and art supplies are the very best!  Buy some (many!) NOW (Like REALLY
 Immediately!!) for you, your mum and your pet chinchilla Frank.
 
 Since the question comes up occassionally, the mode-line hack used
 in the presentation is based on original work by Armit Patel. I
 gisted this a while back, you can get it from.
 https://gist.github.com/jasonm23/8554119
-

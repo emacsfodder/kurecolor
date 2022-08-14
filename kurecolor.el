@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.3.6
+;;; Version: 1.4.0
 ;;
 ;;; Package-Requires: ((emacs "28.1") (s "1.12"))
 ;;
@@ -11,13 +11,15 @@
 ;;; Licence: MIT
 ;;
 ;;; Commentary:
+;; # Kurecolor
+;;
 ;; A collection of tools aimed at those working with color, useful for CSS,
 ;; Emacs themes, etc.
 ;;
-;;[![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
-;;[![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
+;; [![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
+;; [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 ;;
-;; When using kurecolor commands, we suggest using rainbow-mode for instant feedback on color changes.
+;; When using kurecolor commands, I suggest using rainbow-mode for instant feedback on color changes.
 ;;
 ;; ## Installing
 ;;
@@ -25,11 +27,15 @@
 ;;
 ;;     M-x package-install kurecolor
 ;;
-;; ### Tests
+;; - - -
+;; [[ function-list ]]
 ;;
-;; This package has a suite of unit tests.  To run them load both
-;; kurecolor and kurecolor-test, and then do `M-x ert' (accept
-;; `default').
+;; [[ function-docs ]]
+;;
+;; ### Test/Examples
+;;
+;; The examples documented here are live tests (in `kurecolor-examples.el'). You can
+;; run them using `bin/test' from the package folder.`
 ;;
 ;; ## Ephemera
 ;;
@@ -40,7 +46,7 @@
 ;; suit. (seriously guys, this is just free advertising.)
 ;;
 ;; I have not been pressured into saying this, however, Kurecolor
-;; markers and art supplies are best best!  Buy some NOW (Like REALLY
+;; markers and art supplies are the very best!  Buy some (many!) NOW (Like REALLY
 ;; Immediately!!) for you, your mum and your pet chinchilla Frank.
 ;;
 ;; Since the question comes up occassionally, the mode-line hack used
@@ -331,18 +337,18 @@ returns a 6 digit hex color."
      num)))
 
 (defun kurecolor-cssrgb-to-hex (cssrgb &optional hexrgba)
-  "Convert a CSSRGB (rgb() or rgba()) color to hex.
+  "Convert a CSSRGB (`rgb()' or `rgba()') color to hex.
 
 When HEXRGBA is non-nil the hex color string will be RGBA.
-If css alpha value isn't present, it will be set as 1.0
+If css `alpha' value isn't present, it will be set as `1.0'
 (i.e. no transparency)
 
-Valid css rgb() rgba() values are supported."
+Valid css `rgb()' `rgba()' values are supported."
   (let ((rgb (cdr (s-match
                     (concat "rgba?(\s*"
-                           "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
-                           "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
-                           "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,?\\(.*?\\))")
+                     "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
+                     "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
+                     "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,?\\(.*?\\))")
                    cssrgb))))
     (cl-destructuring-bind (r g b a)
         (mapcar 'kurecolor-css-rgb-value-to-number rgb)
@@ -355,17 +361,17 @@ Valid css rgb() rgba() values are supported."
           (format "#%02X%02X%02X" r g b))))))
 
 (defun kurecolor-css-rgb-value-to-number (string)
-  "Convert STRING (css rgb()/rgba() r, g, b values) to a number from 0-255."
+  "Convert STRING (css `rgb()'/`rgba()' `r', `g', `b' values) to a number from `0-255'."
   (if (s-ends-with? "%" string)
       (* (/ (string-to-number string) 100.0) 255)
     (string-to-number string)))
 
 (defun kurecolor-to-8bit (n)
-  "Convert N (0.0-1.0) to 0-255."
+  "Convert N (`0.0-1.0') to `0-255'."
   (* n 255.0))
 
 (defun kurecolor-hex-to-cssrgb (hex)
-  "Convert a HEX rgb color to cssrgb."
+  "Convert a HEX rgb color to css rgb."
   (cl-destructuring-bind (r g b)
       (mapcar 'kurecolor-to-8bit (kurecolor-hex-to-rgb hex))
     (format "rgb(%i, %i, %i)" r g b)))
@@ -411,9 +417,8 @@ Valid css rgb() rgba() values are supported."
 ;;;###autoload
 (defun kurecolor-increase-brightness-by-step (x)
   "Increase brightness on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
+Accepts universal argument X."
+  (interactive "p")
   (kurecolor-replace-current
    'kurecolor-adjust-brightness
    (/ (* x kurecolor-color-adjust-brightness-step) 100.0)))
@@ -421,9 +426,8 @@ Accepts universal argument (X)."
 ;;;###autoload
 (defun kurecolor-decrease-brightness-by-step (x)
   "Decrease brightness on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
+Accepts universal argument X."
+  (interactive "p")
   (kurecolor-replace-current
    'kurecolor-adjust-brightness
    (/ (* (* -1 x) kurecolor-color-adjust-brightness-step) 100.0)))
@@ -431,9 +435,8 @@ Accepts universal argument (X)."
 ;;;###autoload
 (defun kurecolor-increase-saturation-by-step (x)
   "Increase saturation on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
+Accepts universal argument X."
+  (interactive "p")
   (kurecolor-replace-current
    'kurecolor-adjust-saturation
    (/ (* x kurecolor-color-adjust-saturation-step) 100.0)))
@@ -441,9 +444,8 @@ Accepts universal argument (X)."
 ;;;###autoload
 (defun kurecolor-decrease-saturation-by-step (x)
   "Decrease saturation on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
+Accepts universal argument X."
+  (interactive "p")
   (kurecolor-replace-current
    'kurecolor-adjust-saturation
    (/ (*  (* -1 x) kurecolor-color-adjust-saturation-step) 100.0)))
@@ -451,9 +453,8 @@ Accepts universal argument (X)."
 ;;;###autoload
 (defun kurecolor-increase-hue-by-step (x)
   "Increase hue on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
+Accepts universal argument X."
+  (interactive "p")
   (kurecolor-replace-current
    'kurecolor-adjust-hue
    (/ (* x kurecolor-color-adjust-hue-step) 360.0)))
@@ -461,9 +462,8 @@ Accepts universal argument (X)."
 ;;;###autoload
 (defun kurecolor-decrease-hue-by-step (x)
   "Decrease hue on hex color at point (or in region) by step.
-Accepts universal argument (X)."
-  (interactive "P")
-  (unless (numberp x) (setq x 1))
+Accepts universal argument X."
+  (interactive "p")
   (kurecolor-replace-current
    'kurecolor-adjust-hue
    (/ (* (* -1 x) kurecolor-color-adjust-hue-step) 360.0)))

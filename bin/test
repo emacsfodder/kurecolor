@@ -6,9 +6,9 @@ emacs --batch \
   -eval "(add-to-list 'load-path \"${dash}\")" \
   -eval "(add-to-list 'load-path \"${s_el}\")" \
   -eval "(add-to-list 'load-path \".\")" \
-  -l ./ettd.el \
+  -l ./etd.el \
   -l dash \
   -l ./kurecolor.el \
   -l ert \
-  -l ./kurecolor-test.el \
+  -l ./kurecolor-examples.el \
   --eval "(ert-run-tests-batch-and-exit)"

@@ -1,10 +1,10 @@
-;;; kurecolor-test --- tests for Kurecolor
+;;; kurecolor-examples --- tests for Kurecolor
 ;; -*- lexical-binding: t; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)))); -*-
 ;;
-;;; Version: 1.3.6
+;;; Version: 1.4.0
 ;;
 ;;; Commentary:
-;; Uses a prototype test wrapper for ert called ettd.
+;; Uses a prototype ert test wrapper `./etd.el'.
 ;;
 ;;; ;;; Code:
 ;;
@@ -13,7 +13,7 @@
 ;; no-byte-compile: t
 ;; End:
 
-(require 'ettd)
+(require 'etd)
 (require 'dash)
 (require 'kurecolor)
 

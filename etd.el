@@ -1,4 +1,4 @@
-;;; ettd.el --- Examples-to-tests-and-docs -*- lexical-binding: t; -*-
+;;; etd.el --- Examples to Tests and Docs -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2022 Jason M23
 ;;
@@ -6,9 +6,9 @@
 ;; Maintainer: Jason M23 <jasonm23@gmail.com>
 ;; Created: August 14, 2022
 ;; Modified: August 14, 2022
-;; Version: 0.0.1
+;; Version: 1.4.0
 ;; Keywords: tests examples documentation markdown
-;; Homepage: https://github.com/jasonm23/emacs-ettd
+;; Homepage: https://github.com/emacsfodder/kurecolor
 ;; Package-Requires: ((emacs "24.3"))
 ;;
 ;; This file is not part of GNU Emacs.
@@ -16,7 +16,7 @@
 ;;; Commentary:
 ;; Derived from the test/docs functions/macros in magnars/s.el library.
 ;;
-;; ETTD allows the simple writing of examples as tests and generation of
+;; ETD allows the simple writing of examples as tests and generation of
 ;; markdown documents for both functions and examples.
 ;;
 ;; Currently this package is dogfooding in emacsfodder/kurecolor and will be
@@ -25,16 +25,14 @@
 ;;
 ;; ## Usage:
 ;;
-;; The easiest way to understand how to use `ettd' is to check out
-;; `kurecolor-tests.el' in this folder.
-;;
-;; TODO
+;; The easiest way to understand how to use `etd' is to check out
+;; `kurecolor-examples.el' in this folder.
 ;;
 ;;; Code:
 
 (require 'ert)
 
-(defvar ettd-testing t "When set to t run tests, when set to nil generate documents.")
+(defvar etd-testing t "When set to t run tests, when set to nil generate documents.")
 (defvar functions '() "Collected functions.")
 
 (defun examples-to-should-1 (examples)
@@ -56,7 +54,7 @@
 (defmacro defexamples (cmd &rest examples)
   "CMD and EXAMPLES to ert-deftests."
   (declare (indent 1))
-  (if ettd-testing
+  (if etd-testing
 
    `(ert-deftest ,cmd ()
       ,@(examples-to-should examples))
@@ -70,7 +68,7 @@
 (defmacro def-example-group (group &rest examples)
   "GROUP of EXAMPLES for docs."
   (declare (indent 1))
-  (if ettd-testing
+  (if etd-testing
       `(progn ,@examples)
    `(progn
       (add-to-list 'functions ,group)
@@ -123,7 +121,7 @@
      "`\\([^ ]+\\)'"
      "`\\1`"
      (replace-regexp-in-string
-      "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b"
+      "\\b\\([A-Z][A-Z0-9-]*\\)\\b"
       'quote-and-downcase
       docstring t)))))
 
@@ -135,9 +133,9 @@
           (signature (cadr function))
           (docstring (quote-docstring (caddr function)))
           (examples (cadddr function)))
-      (format "### %s `%s`\n\n%s\n\n```lisp\n%s\n```\n"
+      (format "### %s %s\n\n%s\n\n```lisp\n%s\n```\n"
               command-name
-              signature
+              (if signature (format "`%s`" signature) "")
               docstring
               (mapconcat 'identity (first-three examples) "\n")))))
 
@@ -196,15 +194,23 @@
      (insert (mapconcat 'function-to-md functions "\n"))
      (simplify-quotes))))
 
-(defun create-docs-for-buffer (template readme)
+(defun create-docs-file-for-buffer (template readme)
   "Create README from TEMPLATE."
   (interactive "fSelect Template: \nFSelect README.md file: ")
-  (setq ettd-testing nil)
+  (setq etd-testing nil)
   (setq functions '())
   (eval-buffer)
   (create-docs-file template readme)
-  (setq ettd-testing t)
+  (setq etd-testing t)
   (eval-buffer))
+
+(defun create-docs-file-for (examples-file template readme)
+  "Using EXAMPLES-FILE and TEMPLATE create README."
+  (interactive "fSelect Examples file: \nfSelect Template: \nFSelect README.md file: ")
+  (setq etd-testing nil)
+  (setq functions '())
+  (load-file examples-file)
+  (create-docs-file template readme))
 
 (defun first-three (list)
   "Select first 3 examples from LIST."
@@ -217,5 +223,5 @@
           (setq first (cons (caddr list) first)))))
     (nreverse first)))
 
-(provide 'ettd)
-;;; ettd.el ends here
+(provide 'etd)
+;;; etd.el ends here
