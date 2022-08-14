@@ -245,7 +245,7 @@ When region not active, act on the whole buffer."
   (interactive "nAdjust brightness (-1.0..1.0): ")
   (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-brightness brightness))
 
-(defun kurecolor-hex-adjust-hue-in-region (hue)
+(defun kurecolor-hex-adjust-in-region (hue)
   "Set the HUE of all hex colors found in region (BEGIN END).
 When region not active, act on the whole buffer."
   (interactive "nAdjust hue for all colors (-360°..+360°): ")
@@ -330,19 +330,35 @@ returns a 6 digit hex color."
        max
      num)))
 
-(defun kurecolor-cssrgb-to-hex (cssrgb)
-  "Convert a CSSRGB (or rgba) color to hex (alpha value is ignored)."
-  (let ((rgb (cdr
-              (s-match
-               (concat "rgba?(\s*"
-                       "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
-                       "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
-                       "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,?.*?)")
-               ;; For now we discard the alpha but we need to be aware
-               ;; of its presence for the Rx to match rgba() colors.
-               cssrgb))))
-    (cl-destructuring-bind (r g b) (mapcar 'string-to-number rgb)
-      (format "#%02X%02X%02X" r g b))))
+(defun kurecolor-cssrgb-to-hex (cssrgb &optional hexrgba)
+  "Convert a CSSRGB (rgb() or rgba()) color to hex.
+
+When HEXRGBA is non-nil the hex color string will be RGBA.
+If css alpha value isn't present, it will be set as 1.0
+(i.e. no transparency)
+
+Valid css rgb() rgba() values are supported."
+  (let ((rgb (cdr (s-match
+                    (concat "rgba?(\s*"
+                           "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
+                           "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,\s*"
+                           "\\([0-9]\\{1,3\\}\\(?:\s*%\\)?\\)\s*,?\\(.*?\\))")
+                   cssrgb))))
+    (cl-destructuring-bind (r g b a)
+        (mapcar 'kurecolor-css-rgb-value-to-number rgb)
+      (let ((a (if (string-blank-p (cadddr rgb))
+                   1.0
+                 a)))
+        (if hexrgba
+            (concat (format "#%02X%02X%02X" r g b)
+                    (if a (format "%02X" (kurecolor-to-8bit a))) "")
+          (format "#%02X%02X%02X" r g b))))))
+
+(defun kurecolor-css-rgb-value-to-number (string)
+  "Convert STRING (css rgb()/rgba() r, g, b values) to a number from 0-255."
+  (if (s-ends-with? "%" string)
+      (* (/ (string-to-number string) 100.0) 255)
+    (string-to-number string)))
 
 (defun kurecolor-to-8bit (n)
   "Convert N (0.0-1.0) to 0-255."
@@ -364,7 +380,7 @@ returns a 6 digit hex color."
             (kurecolor-to-8bit b)
             a)))
 
-(defun kurecolor-xcode-color-literal-to-hex-rgba(color-literal)
+(defun kurecolor-xcode-color-literal-to-hex-rgba (color-literal)
   "Convert an XCode COLOR-LITERAL to a hex rgba string."
   (cl-destructuring-bind (red green blue alpha)
       (mapcar 'kurecolor-to-8bit
@@ -377,7 +393,7 @@ returns a 6 digit hex color."
                                  color-literal)))))
     (format "#%02X%02X%02X%02X" red green blue alpha)))
 
-(defun kurecolor-hex-rgba-to-xcode-color-literal(rgba)
+(defun kurecolor-hex-rgba-to-xcode-color-literal (rgba)
   "Convert a hex RGBA string to an XCode color-literal."
   (cl-destructuring-bind (r g b a)
       (kurecolor-hex-to-rgba rgba)
@@ -385,7 +401,7 @@ returns a 6 digit hex color."
      "#colorLiteral(red: %.10f, green: %.10f, blue: %.10f, alpha: %.10f)"
      r g b a)))
 
-(defun kurecolor-xcode-color-literal-to-hex-rgb(color-literal)
+(defun kurecolor-xcode-color-literal-to-hex-rgb (color-literal)
   "Convert an XCode COLOR-LITERAL to a hex rgb string."
   (substring
    (kurecolor-xcode-color-literal-to-hex-rgba color-literal) 0 7))

@@ -1,14 +1,23 @@
+;;; kurecolor-test --- tests for Kurecolor
 ;; -*- lexical-binding: t; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)))); -*-
-;; Kurecolor Tests...
 ;;
 ;;; Version: 1.3.6
 ;;
+;;; Commentary:
+;; Uses a prototype test wrapper for ert called ettd.
+;;
 ;;; ;;; Code:
+;;
+;; Local Variables:
+;; eval: (when (fboundp 'rainbow-mode) (rainbow-mode +1))
+;; no-byte-compile: t
+;; End:
 
 (require 'ettd)
 (require 'dash)
 (require 'kurecolor)
-(def-example-group "utility functions"
+
+(def-example-group "Utility functions"
  (defexamples kurecolor-clamp
    (kurecolor-clamp 1 -1.0 1.0)    => 1
    (kurecolor-clamp 2 -1.0 1.0)    => 1.0
@@ -43,14 +52,18 @@
    (kurecolor-hex-to-cssrgba "#34729180") => "rgba(52, 114, 145, 0.5020)")
 
  (defexamples kurecolor-cssrgb-to-hex
-   (kurecolor-cssrgb-to-hex "rgb(52, 114, 145)")        => "#347291"
-   (kurecolor-cssrgb-to-hex "rgb(10%, 20%, 90%)")       => "#0A145A"
-   (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 1.0)")  => "#347291"
-   (kurecolor-cssrgb-to-hex "rgba(10%, 20%, 90%, 1.0)") => "#0A145A")
+   (kurecolor-cssrgb-to-hex "rgb(10%, 20%, 90%)")          => "#1933E5"
+   (kurecolor-cssrgb-to-hex "rgba(100%, 100%, 100%, 1.0)") => "#FFFFFF"
+   (kurecolor-cssrgb-to-hex "rgb(52, 114, 145)")           => "#347291"
+   (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 1.0)")     => "#347291"
+   (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 1.0)")     => "#347291"
+   (kurecolor-cssrgb-to-hex "rgb(52, 114, 145)" t)         => "#347291FF"
+   (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 0.5)" t)   => "#3472917F")
 
- (defexamples kurecolor-cssrgba-to-hex
-   (kurecolor-cssrgb-to-hex "rgba(52, 114, 145, 1.0)") =>  "#347291"
-   (kurecolor-cssrgb-to-hex "rgba(10%, 20%, 90%, 1.0)") => "#0A145A"))
+ (defexamples kurecolor-css-rgb-value-to-number
+   (kurecolor-css-rgb-value-to-number "10") => 10
+   (kurecolor-css-rgb-value-to-number "10%") => 25.5
+   (kurecolor-css-rgb-value-to-number "100%") => 255.0))
 
 (def-example-group "Absolute set hue, saturation, brightness"
  (defexamples kurecolor-hex-set-hue
@@ -67,6 +80,22 @@
    (kurecolor-hex-set-brightness "#FF7700" 0.5) => "#7F3B00"
    (kurecolor-hex-set-brightness "#FF0000" 0.5) => "#7F0000"
    (kurecolor-hex-set-brightness "#FF0077" 0.5) => "#7F003B"))
+
+(def-example-group "Set hue, saturation, brightness from another hex color"
+ (defexamples kurecolor-hex-set-brightness-from
+   (kurecolor-hex-set-brightness-from "#008800" "#000000") => "#888888"
+   (kurecolor-hex-set-brightness-from "#00FF00" "#000000") => "#FFFFFF"
+   (kurecolor-hex-set-brightness-from "#000000" "#00FF00") => "#000000")
+
+ (defexamples kurecolor-hex-set-hue-from
+   (kurecolor-hex-set-hue-from "#FF0000" "#00FF00") => "#FF0000"
+   (kurecolor-hex-set-hue-from "#00FF00" "#FF0000") => "#00FF00"
+   (kurecolor-hex-set-hue-from "#0088FF" "#880000") => "#004888")
+
+ (defexamples kurecolor-hex-set-saturation-from
+   (kurecolor-hex-set-saturation-from "#000000" "#00FF00") => "#FFFFFF"
+   (kurecolor-hex-set-saturation-from "#004400" "#00FF00") => "#00FF00"
+   (kurecolor-hex-set-saturation-from "#FFBB7F" "#FF7700") => "#FFBA7F"))
 
 (def-example-group "RGB Hex to rgb"
  (defexamples kurecolor-hex-to-rgb
@@ -163,65 +192,42 @@
    (kurecolor-adjust-hue "#329847"  0.5) => "#983183"))
 
 (def-example-group "XCode color literal helpers"
- (defexamples kurecolor-xcode-literal-to-hex-rgba
-   (kurecolor-xcode-color-literal-to-hex-rgba
-    "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
-   => "#163242FF")
+  (defexamples kurecolor-hex-rgba-to-xcode-color-literal
+    (kurecolor-hex-rgba-to-xcode-color-literal "#0E1B21FF")
+    => "#colorLiteral(red: 0.0549019608, green: 0.1058823529, blue: 0.1294117647, alpha: 1.0000000000)"
+    (kurecolor-hex-rgba-to-xcode-color-literal "#ECF3F600")
+    => "#colorLiteral(red: 0.9254901961, green: 0.9529411765, blue: 0.9647058824, alpha: 0.0000000000)"
+    (kurecolor-hex-rgba-to-xcode-color-literal "#ADC3CC80")
+    => "#colorLiteral(red: 0.6784313725, green: 0.7647058824, blue: 0.8000000000, alpha: 0.5019607843)")
 
- (defexamples kurecolor-xcode-literal-to-hex-rgb
-   (kurecolor-xcode-color-literal-to-hex-rgb
-    "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.1294117647, alpha: 1)")
-   => "#0E1C20")
+  (defexamples kurecolor-xcode-literal-to-hex-rgba
+    (kurecolor-xcode-color-literal-to-hex-rgba
+     "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
+    => "#163242FF")
 
- (defexamples kurecolor-xcode-literal-to-hex-rgba
-   (kurecolor-xcode-color-literal-to-hex-rgba
-    "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
-   => "#0E1B21FF"
-   (kurecolor-xcode-color-literal-to-hex-rgba
-    "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
-   => "#ECF3F6FF"
-   (kurecolor-xcode-color-literal-to-hex-rgba
-    "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
-   => "#ADC3CCFF")
+  (defexamples kurecolor-xcode-literal-to-hex-rgb
+    (kurecolor-xcode-color-literal-to-hex-rgb
+     "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.1294117647, alpha: 1)")
+    => "#0E1C20")
 
- (defexamples kurecolor-xcode-literal-to-hex-rgb
-   (kurecolor-xcode-color-literal-to-hex-rgb
-    "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
-   => "#0E1B21"
-   (kurecolor-xcode-color-literal-to-hex-rgb
-    "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
-   => "#ECF3F6"
-   (kurecolor-xcode-color-literal-to-hex-rgb
-    "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
-   => "#ADC3CC")
+  (defexamples kurecolor-xcode-literal-to-hex-rgba
+    (kurecolor-xcode-color-literal-to-hex-rgba
+     "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
+    => "#0E1B21FF"
+    (kurecolor-xcode-color-literal-to-hex-rgba
+     "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
+    => "#ECF3F6FF"
+    (kurecolor-xcode-color-literal-to-hex-rgba
+     "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
+    => "#ADC3CCFF")
 
- (defexamples kurecolor-hex-rgba-to-xcode-literal
-   (kurecolor-hex-rgba-to-xcode-color-literal "#0E1B21FF")
-   => "#colorLiteral(red: 0.0549019608, green: 0.1058823529, blue: 0.1294117647, alpha: 1.0000000000)"
-   (kurecolor-hex-rgba-to-xcode-color-literal "#ECF3F600")
-   => "#colorLiteral(red: 0.9254901961, green: 0.9529411765, blue: 0.9647058824, alpha: 0.0000000000)"
-   (kurecolor-hex-rgba-to-xcode-color-literal "#ADC3CC80")
-   => "#colorLiteral(red: 0.6784313725, green: 0.7647058824, blue: 0.8000000000, alpha: 0.5019607843)"))
-
-(def-example-group "Set from hex color"
- (defexamples kurecolor-hex-set-brightness-from
-   (kurecolor-hex-set-brightness-from "#008800" "#000000") => "#888888"
-   (kurecolor-hex-set-brightness-from "#00FF00" "#000000") => "#FFFFFF"
-   (kurecolor-hex-set-brightness-from "#000000" "#00FF00") => "#000000")
-
- (defexamples kurecolor-hex-set-hue-from
-   (kurecolor-hex-set-hue-from "#FF0000" "#00FF00") => "#FF0000"
-   (kurecolor-hex-set-hue-from "#00FF00" "#FF0000") => "#00FF00"
-   (kurecolor-hex-set-hue-from "#0088FF" "#880000") => "#004888")
-
- (defexamples kurecolor-hex-set-saturation-from
-   (kurecolor-hex-set-saturation-from "#000000" "#00FF00") => "#FFFFFF"
-   (kurecolor-hex-set-saturation-from "#004400" "#00FF00") => "#00FF00"
-   (kurecolor-hex-set-saturation-from "#FFBB7F" "#FF7700") => "#FFBA7F"))
-
-(provide 'kurecolor-test)
-
-;; Local Variables:
-;; eval: (when (fboundp 'rainbow-mode) (rainbow-mode +1))
-;; no-byte-compile: t
-;; End:
+  (defexamples kurecolor-xcode-literal-to-hex-rgb
+    (kurecolor-xcode-color-literal-to-hex-rgb
+     "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
+    => "#0E1B21"
+    (kurecolor-xcode-color-literal-to-hex-rgb
+     "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
+    => "#ECF3F6"
+    (kurecolor-xcode-color-literal-to-hex-rgb
+     "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
+    => "#ADC3CC"))

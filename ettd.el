@@ -87,9 +87,8 @@
         string t t))
      '(("\r" . "\\r")
        ("\t" . "\\t")
-       ("\n" . "\\n")
        ("\\\\\\?" . "?"))
-     :initial-value (format "%S ;; => %S" actual expected))))
+     :initial-value (format "%S\n ⇒ %S" actual expected))))
 
 (defun examples-to-strings (examples)
   "Create strings from list of EXAMPLES."
@@ -117,14 +116,16 @@
 
 (defun quote-docstring (docstring)
   "Quote DOCSTRING."
-  (let (case-fold-search)
-   (replace-regexp-in-string
-    "`\\([^ ]+\\)'"
-    "`\\1`"
+  (if (null docstring)
+      ""
+   (let (case-fold-search)
     (replace-regexp-in-string
-     "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b"
-     'quote-and-downcase
-     docstring t))))
+     "`\\([^ ]+\\)'"
+     "`\\1`"
+     (replace-regexp-in-string
+      "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b"
+      'quote-and-downcase
+      docstring t)))))
 
 (defun function-to-md (function)
   "FUNCTION to markdown."
@@ -134,7 +135,7 @@
           (signature (cadr function))
           (docstring (quote-docstring (caddr function)))
           (examples (cadddr function)))
-      (format "### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
+      (format "### %s `%s`\n\n%s\n\n```lisp\n%s\n```\n"
               command-name
               signature
               docstring
@@ -185,14 +186,25 @@
 
 (defun create-docs-file (template readme)
   "Create README from TEMPLATE."
+  (interactive "fSelect Template: \nFSelect README.md file: ")
   (let ((functions (nreverse functions)))
     (with-temp-file readme
-      (insert-file-contents-literally template)
-      (goto-and-remove "[[ function-list ]]")
-      (insert (mapconcat 'function-summary functions "\n"))
-      (goto-and-remove "[[ function-docs ]]")
-      (insert (mapconcat 'function-to-md functions "\n"))
-      (simplify-quotes))))
+     (insert-file-contents-literally template)
+     (goto-and-remove "[[ function-list ]]")
+     (insert (mapconcat 'function-summary functions "\n"))
+     (goto-and-remove "[[ function-docs ]]")
+     (insert (mapconcat 'function-to-md functions "\n"))
+     (simplify-quotes))))
+
+(defun create-docs-for-buffer (template readme)
+  "Create README from TEMPLATE."
+  (interactive "fSelect Template: \nFSelect README.md file: ")
+  (setq ettd-testing nil)
+  (setq functions '())
+  (eval-buffer)
+  (create-docs-file template readme)
+  (setq ettd-testing t)
+  (eval-buffer))
 
 (defun first-three (list)
   "Select first 3 examples from LIST."
