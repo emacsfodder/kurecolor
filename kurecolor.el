@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.3.5
+;;; Version: 1.3.6
 ;;
 ;;; Package-Requires: ((emacs "28.1") (s "1.12"))
 ;;
@@ -254,14 +254,14 @@ When region not active, act on the whole buffer."
 (defun kurecolor-adjust-brightness (hex amount)
   "Adjust the HEX color brightness by AMOUNT -1.0..1.0."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
-    (setq val (kurecolor-clamp (+ amount val) -1.0 1.0))
+    (setq val (kurecolor-clamp (+ amount val) 0.0 1.0))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-adjust-saturation (hex amount)
   "Adjust the HEX color saturation by AMOUNT -1.0..1.0."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
-    (setq sat (kurecolor-clamp (+ sat amount) -1.0 1.0))
+    (setq sat (kurecolor-clamp (+ sat amount) 0.0 1.0))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 

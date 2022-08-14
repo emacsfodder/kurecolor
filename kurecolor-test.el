@@ -1,8 +1,9 @@
 ;; -*- lexical-binding: t; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)))); -*-
 ;; Kurecolor Tests...
 ;;
-;;; Version: 1.3.5 
-;;; Code:
+;;; Version: 1.3.6
+;;
+;;; ;;; Code:
 
 (require 'ettd)
 (require 'dash)
@@ -126,7 +127,8 @@
   (kurecolor-adjust-saturation "#347291"  0.1) => "#256D91"
   (kurecolor-adjust-saturation "#347291"  0.2) => "#176891"
   (kurecolor-adjust-saturation "#256D91"  0.1) => "#166891"
-  (kurecolor-adjust-saturation "#166891"  1.0) => "#006091")
+  (kurecolor-adjust-saturation "#166891"  1.0) => "#006091"
+  (kurecolor-adjust-saturation "#FF0000" -2.0) => "#FFFFFF")
 
 (defexamples kurecolor-adjust-brightness
   (kurecolor-adjust-brightness "#FFFFFF" -0.1) => "#E5E5E5"
@@ -140,7 +142,7 @@
   (kurecolor-adjust-brightness "#000000"  0.1) => "#191919"
   (kurecolor-adjust-brightness "#000000"  0.2) => "#333333"
   (kurecolor-adjust-brightness "#AA6600"  0.1) => "#C37500"
-  (kurecolor-adjust-brightness "#329847"  0.5) => "#53FF77")
+  (kurecolor-adjust-brightness "#329847" -2.5) => "#000000")
 
 (defexamples kurecolor-adjust-hue
   (kurecolor-adjust-hue "#FF0000" -0.1) => "#FF0098"
