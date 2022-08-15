@@ -14,6 +14,18 @@ jobs:
       uses: purcell/setup-emacs@v3.0
       with:
         version: 28.1
-    
+
+    - name: Emacs init
+      run: |
+        mkdir -p ~/.emacs.d
+        echo "(add-to-list 'package-archives '(\"melpa\" . \"https://melpa.org/packages/\"))" > ~/.emacs.d/init.el
+        emacs -e "
+        (progn
+          (package-initialize)
+            (package-initialize)
+            (package-install 'dash)
+            (package-install 's))
+        "
+
     - name: examples
       run: bin/test
