@@ -151,7 +151,7 @@
   "Generate GitHub ID for COMMAND-NAME and SIGNATURE."
   (docs--chop-suffix
    "-"
-   (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (format "%S %S" command-name signature))))
+   (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (format "%S %S" command-name (if signature signature "")))))
 
 (defun function-summary (function)
   "Create a markdown summary of FUNCTION."
@@ -159,7 +159,7 @@
       (concat "\n### " function "\n")
     (let ((command-name (car function))
           (signature (cadr function)))
-      (format "* [%s](#%s) `%s`" command-name (github-id command-name signature) signature))))
+      (format "* [%s](#%s) %s" command-name (github-id command-name signature) (if signature (format "`%s`" signature) "")))))
 
 (defun simplify-quotes ()
   "Simplify quotes in buffer."

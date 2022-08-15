@@ -10,4 +10,5 @@ emacs --batch \
   -l dash \
   -l ./kurecolor.el \
   -l ./kurecolor-examples.el \
-  --eval "(create-docs-file-for \"kurecolor-examples.el\" \"doc-template\" \"README.md\")"
+  --eval "(create-docs-file-for \"kurecolor-examples.el\" \"doc-template\" \"README.md\")" \
+  --eval "(create-docs-file-for \"kurecolor-examples.el\" \"index-template\" \"index.md\")"

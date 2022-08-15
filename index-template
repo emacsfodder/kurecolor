@@ -1,0 +1,28 @@
+A collection of tools aimed at those working with color, useful for CSS,
+Emacs themes, etc.
+
+[![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
+[![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
+
+When using kurecolor commands, I suggest using rainbow-mode for instant feedback on color changes.
+
+## Repository
+
+Visit the main repository at https://github.com/emacsfodder/kurecolor
+
+## Installing
+
+Kurecolor is on MELPA, you can install using `package.el`
+
+    M-x package-install kurecolor
+
+- - -
+[[ function-list ]]
+
+[[ function-docs ]]
+
+### Test/Examples
+
+The examples documented here are live tests (in `kurecolor-examples.el`). You can
+run them using `bin/test` from the package folder.`
+

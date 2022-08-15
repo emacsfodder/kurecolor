@@ -71,7 +71,7 @@
    (kurecolor-hex-set-hue "#FF00FF" 0.5) => "#00FFFF"
    (kurecolor-hex-set-hue "#FFFF00" 0.5) => "#00FFFF")
 
- (defexamples kurecolor-hex-set-sat
+ (defexamples kurecolor-hex-set-saturation
    (kurecolor-hex-set-saturation "#FF7700" 0.5) => "#FFBB7F"
    (kurecolor-hex-set-saturation "#007700" 0.5) => "#3B773B"
    (kurecolor-hex-set-saturation "#FF0000" 0.5) => "#FF7F7F")
@@ -203,14 +203,7 @@
   (defexamples kurecolor-xcode-literal-to-hex-rgba
     (kurecolor-xcode-color-literal-to-hex-rgba
      "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
-    => "#163242FF")
-
-  (defexamples kurecolor-xcode-literal-to-hex-rgb
-    (kurecolor-xcode-color-literal-to-hex-rgb
-     "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.1294117647, alpha: 1)")
-    => "#0E1C20")
-
-  (defexamples kurecolor-xcode-literal-to-hex-rgba
+    => "#163242FF"
     (kurecolor-xcode-color-literal-to-hex-rgba
      "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
     => "#0E1B21FF"
@@ -222,6 +215,9 @@
     => "#ADC3CCFF")
 
   (defexamples kurecolor-xcode-literal-to-hex-rgb
+    (kurecolor-xcode-color-literal-to-hex-rgb
+     "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.0, alpha: 1)")
+    => "#0E1C00"
     (kurecolor-xcode-color-literal-to-hex-rgb
      "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
     => "#0E1B21"
