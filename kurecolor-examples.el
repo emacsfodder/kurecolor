@@ -120,9 +120,6 @@
     (kurecolor-hsv-to-hex 1.0 0.7 1.0) => "#FF4C4C"
     (kurecolor-hsv-to-hex 0.5 0.5 0.6) => "#4C9999")
 
-  (defexamples kurecolor-hex-to-hsv
-     (kurecolor-hex-to-hsv "#347291") => '(0.5555555555555556 0.6413793103448275 0.5686274509803921))
-
   (defexamples kurecolor-hsv-to-rgb
     (kurecolor-hsv-to-rgb 0.5555555555555556 0.6413793103448275 0.5686274509803921)
     => '(0.203921568627451 0.4470588235294117 0.5686274509803921))
