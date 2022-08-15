@@ -352,7 +352,7 @@ Valid css `rgb()' `rgba()' values are supported."
                    cssrgb))))
     (cl-destructuring-bind (r g b a)
         (mapcar 'kurecolor-css-rgb-value-to-number rgb)
-      (let ((a (if (string-blank-p (cadddr rgb))
+      (let ((a (if (string= "" (cadddr rgb))
                    1.0
                  a)))
         (if hexrgba
