@@ -1,6 +1,11 @@
 #!/bin/sh
-dash=$(find ~/.emacs.d -type d | grep "/dash.el" | head -1)
-s_el=$(find ~/.emacs.d -type d | grep "/s[.]el" | head -1)
+
+
+dash="$(dirname $(find ~/.emacs.d | grep "/dash.el$" | tail -1))"
+s_el="$(dirname $(find ~/.emacs.d | grep "/s.el$" | tail -1))"
+
+echo $dash
+echo $s_el
 
 emacs --batch \
   -eval "(add-to-list 'load-path \"${dash}\")" \
