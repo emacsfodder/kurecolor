@@ -1,5 +1,3 @@
-# Kurecolor
-
 A collection of tools aimed at those working with color, useful for CSS,
 Emacs themes, etc.
 
