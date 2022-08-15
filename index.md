@@ -6,6 +6,10 @@ Emacs themes, etc.
 
 When using kurecolor commands, I suggest using rainbow-mode for instant feedback on color changes.
 
+## Repository
+
+Visit the main repository at https://github.com/emacsfodder/kurecolor
+
 ## Installing
 
 Kurecolor is on MELPA, you can install using `package.el`
@@ -30,7 +34,7 @@ Kurecolor is on MELPA, you can install using `package.el`
 ### Absolute set hue, saturation, brightness
 
 * [kurecolor-hex-set-hue](#kurecolor-hex-set-hue-hex-hue) `(hex hue)`
-* [kurecolor-hex-set-sat](#kurecolor-hex-set-sat-nil) `nil`
+* [kurecolor-hex-set-saturation](#kurecolor-hex-set-saturation-hex-sat) `(hex sat)`
 * [kurecolor-hex-set-brightness](#kurecolor-hex-set-brightness-hex-val) `(hex val)`
 
 ### Set hue, saturation, brightness from another hex color
@@ -70,10 +74,8 @@ Kurecolor is on MELPA, you can install using `package.el`
 ### XCode color literal helpers
 
 * [kurecolor-hex-rgba-to-xcode-color-literal](#kurecolor-hex-rgba-to-xcode-color-literal-rgba) `(rgba)`
-* [kurecolor-xcode-literal-to-hex-rgba](#kurecolor-xcode-literal-to-hex-rgba-nil) `nil`
-* [kurecolor-xcode-literal-to-hex-rgb](#kurecolor-xcode-literal-to-hex-rgb-nil) `nil`
-* [kurecolor-xcode-literal-to-hex-rgba](#kurecolor-xcode-literal-to-hex-rgba-nil) `nil`
-* [kurecolor-xcode-literal-to-hex-rgb](#kurecolor-xcode-literal-to-hex-rgb-nil) `nil`
+* [kurecolor-xcode-literal-to-hex-rgba](#kurecolor-xcode-literal-to-hex-rgba) 
+* [kurecolor-xcode-literal-to-hex-rgb](#kurecolor-xcode-literal-to-hex-rgb) 
 
 
 ### kurecolor-clamp `(num min max)`
@@ -189,9 +191,10 @@ returns a 6 digit hex color.
  ⇒ "#00FFFF"
 ```
 
-### kurecolor-hex-set-sat 
+### kurecolor-hex-set-saturation `(hex sat)`
 
-
+Change a `hex` color's saturation `sat`, amount values from 0-1.
+returns a 6 digit hex color.
 
 ```lisp
 (kurecolor-hex-set-saturation "#FF7700" 0.5)
@@ -440,28 +443,10 @@ Convert a hex `rgba` string to an XCode color-literal.
 ```lisp
 (kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
  ⇒ "#163242FF"
-```
-
-### kurecolor-xcode-literal-to-hex-rgb 
-
-
-
-```lisp
-(kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.1294117647, alpha: 1)")
- ⇒ "#0E1C20"
-```
-
-### kurecolor-xcode-literal-to-hex-rgba 
-
-
-
-```lisp
 (kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
  ⇒ "#0E1B21FF"
 (kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
  ⇒ "#ECF3F6FF"
-(kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
- ⇒ "#ADC3CCFF"
 ```
 
 ### kurecolor-xcode-literal-to-hex-rgb 
@@ -469,12 +454,12 @@ Convert a hex `rgba` string to an XCode color-literal.
 
 
 ```lisp
+(kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.0, alpha: 1)")
+ ⇒ "#0E1C00"
 (kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.0585, green: 0.10855, blue: 0.13, alpha: 1)")
  ⇒ "#0E1B21"
 (kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
  ⇒ "#ECF3F6"
-(kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
- ⇒ "#ADC3CC"
 ```
 
 
