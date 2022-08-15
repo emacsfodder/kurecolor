@@ -53,7 +53,6 @@ Kurecolor is on MELPA, you can install using `package.el`
 
 * [kurecolor-hex-to-hsv](#kurecolor-hex-to-hsv-hex) `(hex)`
 * [kurecolor-hsv-to-hex](#kurecolor-hsv-to-hex-h-s-v) `(h s v)`
-* [kurecolor-hex-to-hsv](#kurecolor-hex-to-hsv-hex) `(hex)`
 * [kurecolor-hsv-to-rgb](#kurecolor-hsv-to-rgb-h-s-v) `(h s v)`
 * [kurecolor-rgb-to-hex](#kurecolor-rgb-to-hex-rgb) `(rgb)`
 
@@ -294,9 +293,9 @@ Convert a 6 digit `hex` color to h s v.
 (kurecolor-hex-to-hsv "#347291")
  ⇒ '(0.5555555555555556 0.6413793103448275 0.5686274509803921)
 (kurecolor-hex-to-hsv "#729134")
- ⇒ '(0.6413793103448275 0.5686274509803921 0.5555555555555556)
+ ⇒ '(0.2222222222222222 0.6413793103448275 0.5686274509803921)
 (kurecolor-hex-to-hsv "#913472")
- ⇒ '(0.5686274509803921 0.5555555555555556 0.6413793103448275)
+ ⇒ '(0.8888888888888888 0.6413793103448275 0.5686274509803921)
 ```
 
 ### kurecolor-hsv-to-hex `(h s v)`
@@ -310,15 +309,6 @@ Convert `h` `s` `v` to a 6 digit hex color.
  ⇒ "#FF4C4C"
 (kurecolor-hsv-to-hex 0.5 0.5 0.6)
  ⇒ "#4C9999"
-```
-
-### kurecolor-hex-to-hsv `(hex)`
-
-Convert a 6 digit `hex` color to h s v.
-
-```lisp
-(kurecolor-hex-to-hsv "#347291")
- ⇒ '(0.5555555555555556 0.6413793103448275 0.5686274509803921)
 ```
 
 ### kurecolor-hsv-to-rgb `(h s v)`
