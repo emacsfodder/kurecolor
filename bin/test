@@ -20,8 +20,6 @@ Dash: $dash
 ════════════════════════════════════════════════════════════════════════════════
 INFO
 
-emacs -e "(describe-function 'string-blank-p)"
-
 emacs --batch \
   -eval "(add-to-list 'load-path \"${dash}\")" \
   -eval "(add-to-list 'load-path \"${s}\")" \
