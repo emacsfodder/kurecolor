@@ -19,5 +19,3 @@ INIT_PACKAGE_EL="(progn \
 # package-lint and cl-lib.
 "$EMACS" -batch \
          --eval "$INIT_PACKAGE_EL"
-
-find ~/.emacs.d
