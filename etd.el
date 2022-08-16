@@ -159,7 +159,10 @@
       (concat "\n### " function "\n")
     (let ((command-name (car function))
           (signature (cadr function)))
-      (format "* [%s](#%s) %s" command-name (github-id command-name signature) (if signature (format "`%s`" signature) "")))))
+      (format "* [%s](#%s) %s"
+              command-name
+              (github-id command-name signature)
+              (if signature (format "`%s`" signature) "")))))
 
 (defun simplify-quotes ()
   "Simplify quotes in buffer."

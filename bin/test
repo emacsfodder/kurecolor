@@ -10,8 +10,11 @@ cat <<INFO
 |   <| |_| | | |  __/ (_| (_) | | (_) | |
 |_|\_\\__,_|_|  \___|\___\___/|_|\___/|_|
 
-
-$(emacs -version)
+ _____         _
+|_   _|__  ___| |_ ___
+  | |/ _ \/ __| __/ __|
+  | |  __/\__ \ |_\__ \
+  |_|\___||___/\__|___/
 
 ────────────────────────────────────────────────────────────────────────────────
 Required packages present:
@@ -24,11 +27,11 @@ emacs --batch \
   -eval "(add-to-list 'load-path \"${dash}\")" \
   -eval "(add-to-list 'load-path \"${s}\")" \
   -eval "(add-to-list 'load-path \".\")" \
-  -l ./etd.el \
+  -l ert \
   -l dash \
   -l s \
+  -l ./etd.el \
   -l ./kurecolor.el \
-  -l ert \
   -l ./kurecolor-examples.el \
   --eval "(ert-run-tests-batch-and-exit)"
 
