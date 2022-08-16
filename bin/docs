@@ -1,5 +1,5 @@
 #!/bin/sh
-
+dash="$(dirname "$(find ~/.emacs.d | grep "/dash.el$" | tail -1)")"
 s="$(dirname "$(find ~/.emacs.d | grep "/s.el$" | tail -1)")"
 
 cat <<INFO
@@ -16,12 +16,17 @@ cat <<INFO
 | |_| | (_) | (__\__ \\
 |____/ \___/ \___|___/
 
+────────────────────────────────────────────────────────────────────────────────
+Required packages present:
+Dash: $dash
+   S: $s
 ════════════════════════════════════════════════════════════════════════════════
 INFO
 
 emacs --batch \
   -eval "(add-to-list 'load-path \".\")" \
-  -eval "(add-to-list 'load-path \"${s}\")" \
+  -eval "(add-to-list 'load-path ${dash}\")" \
+  -eval "(add-to-list 'load-path ${s}\")" \
   -l s \
   -l ert \
   -l ./etd.el \
