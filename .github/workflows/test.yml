@@ -32,7 +32,6 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
-    needs: [test]
     steps:
       - uses: actions/checkout@v3
       - uses: purcell/setup-emacs@v3.0
