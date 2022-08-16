@@ -25,8 +25,8 @@ INFO
 
 emacs --batch \
   -eval "(add-to-list 'load-path \".\")" \
-  -eval "(add-to-list 'load-path ${dash}\")" \
-  -eval "(add-to-list 'load-path ${s}\")" \
+  -eval "(add-to-list 'load-path \"${dash}\")" \
+  -eval "(add-to-list 'load-path \"${s}\")" \
   -l s \
   -l ert \
   -l ./etd.el \
