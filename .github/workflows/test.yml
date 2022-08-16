@@ -4,9 +4,8 @@ on:
   pull_request:
     branches: [ "master" ]
 
-
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,5 +28,22 @@ jobs:
     - name: Emacs init
       run: bin/setup
 
+  test:
     - name: examples
+      needs: setup
       run: bin/test
+
+  docs:
+    - name: docs
+      needs: [build,test]
+      run: |
+        echo " Test Doc generation..."
+        echo "════════════════════════════════════════════════════════════════════════════════"
+        bin/docs
+        echo "════════════════════════════════════════════════════════════════════════════════"
+        git diff
+        echo "════════════════════════════════════════════════════════════════════════════════"
+        cat README.md
+        echo "════════════════════════════════════════════════════════════════════════════════"
+        cat index.md
+        echo "════════════════════════════════════════════════════════════════════════════════"
