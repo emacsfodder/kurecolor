@@ -32,8 +32,21 @@ emacs --batch \
   -l ./etd.el \
   -l ./kurecolor.el \
   -l ./kurecolor-examples.el \
+  --eval "(message \"Update README.md\")"
   --eval "(create-docs-file-for \"kurecolor-examples.el\" \"doc-template\" \"README.md\")" \
+  --eval "(message \"Update index.md\")"
   --eval "(create-docs-file-for \"kurecolor-examples.el\" \"index-template\" \"index.md\")"
+
+echo "
+════════════════════════════════════════════════════════════════════════════════"
+echo "git diff"
+git diff
+
+echo "cat README.md"
+cat README.md
+
+echo "cat index.md"
+cat index.md
 
 echo "
 ════════════════════════════════════════════════════════════════════════════════"
