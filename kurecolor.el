@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.4.2
+;;; Version: 1.4.3
 ;;
 ;;; Package-Requires: ((emacs "25.1") (s "1.12"))
 ;;
@@ -93,7 +93,9 @@
   :group 'kurecolor)
 
 (defun kurecolor-hex-to-rgb (hex)
-  "Convert a 6 digit HEX color to r g b."
+  "Convert a `6' digit HEX color to a list `(r g b)'.
+
+The `r',`g',`b' values range between `0.0..1.0'."
   (setq hex (replace-regexp-in-string "#" "" hex))
   (mapcar #'(lambda (s) (/ (string-to-number s 16) 255.0))
           (list (substring hex 0 2)
@@ -101,7 +103,9 @@
                 (substring hex 4 6))))
 
 (defun kurecolor-hex-to-rgba (hex)
-  "Convert a 8 digit HEX color to r g b a."
+  "Convert a `8' digit `rgba' HEX color to a list `(r g b a)'.
+
+The `r', `g', `b' `a' values can range between `0.0..1.0'."
   (if (= (length hex) 9)
    (let* ((hex (replace-regexp-in-string "#" "" hex))
           (rgba (mapcar #'(lambda (s)
@@ -115,23 +119,25 @@
    (user-error "Hex color %s does not contain an alpha value")))
 
 (defun kurecolor-hex-to-hsv (hex)
-  "Convert a 6 digit HEX color to h s v."
+  "Convert a `6' digit HEX color to `h' `s' `v'."
   (kurecolor-rgb-to-hsv (kurecolor-hex-to-rgb hex)))
 
 (defun kurecolor-hsv-to-hex (h s v)
-  "Convert H S V to a 6 digit hex color."
+  "Convert H S V to a `6' digit hex color."
   (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb h s v)))
 
 (defun kurecolor-rgb-to-hex (rgb)
-  "Replacement simple RGB to hex."
+  "RGB as a list `(r g b)' to `6' digit hex color.
+
+The `r',`g',`b' values can range between `0.0..1.0'."
   (cl-destructuring-bind
       (red green blue)
       (mapcar 'kurecolor-to-8bit rgb)
     (format "#%02X%02X%02X" red green blue)))
 
 (defun kurecolor-rgb-to-hsv (rgb)
-  "Convert RGB, a list of (r g b) to list (h s v).
-For this module, h is returned as [0-1] instead of [0-360]."
+  "Convert RGB, a list of `(r g b)' to list `(h s v)'.
+The values can range between `0.0..1.0'."
   (cl-destructuring-bind
       (red green blue) rgb
     (let*
@@ -157,7 +163,7 @@ For this module, h is returned as [0-1] instead of [0-360]."
 
 (defun kurecolor-hsv-to-rgb (h s v)
   "Convert hsv (H S V) to red green blue.
-Note: args H S V are expected to be a values from 0..1"
+Note: args H S V are expected to be a values from `0.0..1.0'"
   (let* ((i (floor (* h 6.0)))
          (f (- (* h 6.0) i))
          (p (* v (- 1.0 s)))
@@ -236,7 +242,7 @@ When region not active, act on the whole buffer."
 (defun kurecolor-hex-set-hue-in-region (hue)
   "Set the HUE of all hex colors found in region (BEGIN END).
 When region not active, act on the whole buffer."
-  (interactive "nSet hue for all colors (0°-360°): ")
+  (interactive "nSet hue for all colors (0°..360°): ")
   (let ((hue (/ hue 360.0)))
     (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-hue hue)))
 
@@ -259,21 +265,21 @@ When region not active, act on the whole buffer."
   (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-hue hue))
 
 (defun kurecolor-adjust-brightness (hex amount)
-  "Adjust the HEX color brightness by AMOUNT -1.0..1.0."
+  "Adjust the HEX color brightness by AMOUNT `-1.0..1.0'."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
     (setq val (kurecolor-clamp (+ amount val) 0.0 1.0))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-adjust-saturation (hex amount)
-  "Adjust the HEX color saturation by AMOUNT -1.0..1.0."
+  "Adjust the HEX color saturation by AMOUNT `-1.0..1.0'."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
     (setq sat (kurecolor-clamp (+ sat amount) 0.0 1.0))
     (kurecolor-rgb-to-hex
      (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-adjust-hue (hex amount)
-  "Adjust the HEX color hue by AMOUNT 0.0-1.0."
+  "Adjust the HEX color hue by AMOUNT `0.0..1.0'."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
     (setq hue (mod (+ hue amount) 1.0))
     (kurecolor-rgb-to-hex
@@ -292,20 +298,20 @@ When region not active, act on the whole buffer."
   (cadr (cdr (kurecolor-hex-to-hsv hex))))
 
 (defun kurecolor-hex-set-brightness (hex val)
-  "Change a HEX color's brightness VAL, amount values from 0.0-1.0.
-returns a 6 digit hex color."
+  "Change a HEX color's brightness VAL, amount values from `0.0..1.0'.
+returns a `6' digit hex color."
   (cl-destructuring-bind (hue sat skip) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-hex-set-hue (hex hue)
-  "Change a HEX color's HUE, amount values from 0-1.
-returns a 6 digit hex color."
+  "Change a HEX color's HUE, amount values from `0.0..1.0'.
+returns a `6' digit hex color."
   (cl-destructuring-bind (skip sat val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-hex-set-saturation (hex sat)
-  "Change a HEX color's saturation SAT, amount values from 0-1.
-returns a 6 digit hex color."
+  "Change a HEX color's saturation SAT, amount values from `0.0..1.0'.
+returns a `6' digit hex color."
   (cl-destructuring-bind (hue skip val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
@@ -342,7 +348,7 @@ returns a 6 digit hex color."
 
 When HEXRGBA is non-nil the hex color string will be RGBA.
 If css `alpha' value isn't present, it will be set as `1.0'
-(i.e. no transparency)
+i.e. no transparency
 
 Valid css `rgb()' `rgba()' values are supported."
   (let ((rgb (cdr (s-match
@@ -361,14 +367,16 @@ Valid css `rgb()' `rgba()' values are supported."
                     (if a (format "%02X" (kurecolor-to-8bit a))) "")
           (format "#%02X%02X%02X" r g b))))))
 
-(defun kurecolor-css-rgb-value-to-number (string)
-  "Convert STRING (css `rgb()'/`rgba()' `r', `g', `b' values) to a number from `0-255'."
-  (if (s-ends-with? "%" string)
-      (* (/ (string-to-number string) 100.0) 255)
-    (string-to-number string)))
+(defun kurecolor-css-rgb-value-to-number (value)
+  "Convert css `rgb()' or `rgba()': `r', `g', `b' VALUE.
+
+From number `0-255' or percentage, to `0-255'."
+  (if (s-ends-with? "%" value)
+      (* (/ (string-to-number value) 100.0) 255)
+    (string-to-number value)))
 
 (defun kurecolor-to-8bit (n)
-  "Convert N (`0.0-1.0') to `0-255'."
+  "Convert N (`0.0..1.0') to `0-255'."
   (* n 255.0))
 
 (defun kurecolor-hex-to-cssrgb (hex)
@@ -388,7 +396,7 @@ Valid css `rgb()' `rgba()' values are supported."
             a)))
 
 (defun kurecolor-xcode-color-literal-to-hex-rgba (color-literal)
-  "Convert an XCode COLOR-LITERAL to a hex rgba string."
+  "Convert an XCode COLOR-LITERAL to a hex `rgba' string."
   (cl-destructuring-bind (red green blue alpha)
       (mapcar 'kurecolor-to-8bit
               (mapcar 'string-to-number
@@ -401,7 +409,7 @@ Valid css `rgb()' `rgba()' values are supported."
     (format "#%02X%02X%02X%02X" red green blue alpha)))
 
 (defun kurecolor-hex-rgba-to-xcode-color-literal (rgba)
-  "Convert a hex RGBA string to an XCode color-literal."
+  "Convert a hex RGBA string to an XCode `colorLiteral'."
   (cl-destructuring-bind (r g b a)
       (kurecolor-hex-to-rgba rgba)
     (format
@@ -409,7 +417,7 @@ Valid css `rgb()' `rgba()' values are supported."
      r g b a)))
 
 (defun kurecolor-xcode-color-literal-to-hex-rgb (color-literal)
-  "Convert an XCode COLOR-LITERAL to a hex rgb string."
+  "Convert an XCode COLOR-LITERAL to a hex `rgb' string."
   (substring
    (kurecolor-xcode-color-literal-to-hex-rgba color-literal) 0 7))
 
@@ -534,44 +542,44 @@ Insert a list of hexcolors of different brightness (val)."
 
 ;;;###autoload
 (defun kurecolor-cssrgb-at-point-or-region-to-hex ()
-  "CSS rgb color at point or region to hex rgb."
+  "CSS `rgb' color at point or region to hex `rgb'."
   (interactive)
   (kurecolor-replace-current 'kurecolor-cssrgb-to-hex))
 
 ;;;###autoload
 (defun kurecolor-hexcolor-at-point-or-region-to-css-rgb ()
-  "Hex rgb color at point or region to css rgb color."
+  "Hex `rgb' color at point or region to css `rgb' color."
   (interactive)
   (kurecolor-replace-current 'kurecolor-hex-to-cssrgb))
 
 ;;;###autoload
 (defun kurecolor-hexcolor-at-point-or-region-to-css-rgba ()
-  "Hex rgb color at point or region to css rgba.
-Opacity is always set to 1.0."
+  "Hex `rgb' color at point or region to css `rgba'.
+Opacity is always set to `1.0'."
   (interactive)
   (kurecolor-replace-current 'kurecolor-hex-to-cssrgba))
 
 ;;;###autoload
 (defun kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgba ()
-  "XCode color literal at point to hex rgba."
+  "XCode `colorLiteral' at point to hex `rgba'."
   (interactive)
   (kurecolor-replace-current 'kurecolor-xcode-color-literal-to-hex-rgba))
 
 ;;;###autoload
 (defun kurecolor-xcode-color-literal-at-point-or-region-to-hex-rgb ()
-  "XCode color literal at point to hex rgb."
+  "XCode `colorLiteral' at point to hex `rgb'."
   (interactive)
   (kurecolor-replace-current 'kurecolor-xcode-color-literal-to-hex-rgb))
 
 ;;;###autoload
 (defun kurecolor-hex-rgb-at-point-or-region-to-xcode-color-literal ()
-  "Hex rgb to XCode rgba color literal."
+  "Hex `rgb' to XCode `colorLiteral'."
   (interactive)
   (kurecolor-replace-current 'kurecolor-hex-rgb-to-xcode-color-literal))
 
 ;;;###autoload
 (defun kurecolor-hex-rgba-at-point-or-region-to-xcode-color-literal ()
-  "Hex rgba to XCode rgba color literal."
+  "Hex `rgba' to XCode `colorLiteral'."
   (interactive)
   (kurecolor-replace-current 'kurecolor-hex-rgba-to-xcode-color-literal))
 

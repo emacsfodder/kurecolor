@@ -28,7 +28,7 @@ Kurecolor is on MELPA, you can install using `package.el`
 * [kurecolor-hex-to-cssrgb](#kurecolor-hex-to-cssrgb-hex) `(hex)`
 * [kurecolor-hex-to-cssrgba](#kurecolor-hex-to-cssrgba-hex) `(hex)`
 * [kurecolor-cssrgb-to-hex](#kurecolor-cssrgb-to-hex-cssrgb-optional-hexrgba) `(cssrgb &optional hexrgba)`
-* [kurecolor-css-rgb-value-to-number](#kurecolor-css-rgb-value-to-number-string) `(string)`
+* [kurecolor-css-rgb-value-to-number](#kurecolor-css-rgb-value-to-number-value) `(value)`
 
 ### Absolute set hue, saturation, brightness
 
@@ -91,7 +91,7 @@ Clamp `num` to range of `min` `max`.
 
 ### kurecolor-to-8bit `(n)`
 
-Convert `n` (`0.0-1.0`) to `0-255`.
+Convert `n` (`0.0..1.0`) to `0-255`.
 
 ```lisp
 (kurecolor-to-8bit 0)
@@ -148,7 +148,7 @@ Convert a `cssrgb` (`rgb()` or `rgba()`) color to hex.
 
 When `hexrgba` is non-nil the hex color string will be `rgba`.
 If css `alpha` value isn't present, it will be set as `1.0`
-(i.e. no transparency)
+i.e. no transparency
 
 Valid css `rgb()` `rgba()` values are supported.
 
@@ -161,9 +161,11 @@ Valid css `rgb()` `rgba()` values are supported.
  ⇒ "#347291"
 ```
 
-### kurecolor-css-rgb-value-to-number `(string)`
+### kurecolor-css-rgb-value-to-number `(value)`
 
-Convert `string` (css `rgb()'/`rgba()` `r`, `g`, `b` values) to a number from `0-255`.
+Convert css `rgb()` or `rgba()`: `r`, `g`, `b` `value`.
+
+From number `0-255` or percentage, to `0-255`.
 
 ```lisp
 (kurecolor-css-rgb-value-to-number "10")
@@ -177,8 +179,8 @@ Convert `string` (css `rgb()'/`rgba()` `r`, `g`, `b` values) to a number from `0
 
 ### kurecolor-hex-set-hue `(hex hue)`
 
-Change a `hex` color's `hue`, amount values from 0-1.
-returns a 6 digit hex color.
+Change a `hex` color's `hue`, amount values from `0.0..1.0`.
+returns a `6` digit hex color.
 
 ```lisp
 (kurecolor-hex-set-hue "#FF7700" 0.5)
@@ -191,8 +193,8 @@ returns a 6 digit hex color.
 
 ### kurecolor-hex-set-saturation `(hex sat)`
 
-Change a `hex` color's saturation `sat`, amount values from 0-1.
-returns a 6 digit hex color.
+Change a `hex` color's saturation `sat`, amount values from `0.0..1.0`.
+returns a `6` digit hex color.
 
 ```lisp
 (kurecolor-hex-set-saturation "#FF7700" 0.5)
@@ -205,8 +207,8 @@ returns a 6 digit hex color.
 
 ### kurecolor-hex-set-brightness `(hex val)`
 
-Change a `hex` color's brightness `val`, amount values from 0.0-1.0.
-returns a 6 digit hex color.
+Change a `hex` color's brightness `val`, amount values from `0.0..1.0`.
+returns a `6` digit hex color.
 
 ```lisp
 (kurecolor-hex-set-brightness "#FF7700" 0.5)
@@ -260,7 +262,9 @@ Copy the saturation of `source` to `target`.
 
 ### kurecolor-hex-to-rgb `(hex)`
 
-Convert a 6 digit `hex` color to r g b.
+Convert a `6` digit `hex` color to a list `(r g b)'.
+
+The `r',`g',`b` values range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-hex-to-rgb "#347291")
@@ -274,7 +278,9 @@ Convert a 6 digit `hex` color to r g b.
 
 ### kurecolor-hex-to-rgba `(hex)`
 
-Convert a 8 digit `hex` color to r g b a.
+Convert a `8` digit `rgba` `hex` color to a list `(r g b a)'.
+
+The `r`, `g`, `b` `a` values can range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-hex-to-rgba "#34729100")
@@ -288,7 +294,7 @@ Convert a 8 digit `hex` color to r g b a.
 
 ### kurecolor-hex-to-hsv `(hex)`
 
-Convert a 6 digit `hex` color to h s v.
+Convert a `6` digit `hex` color to `h` `s` `v`.
 
 ```lisp
 (kurecolor-hex-to-hsv "#347291")
@@ -301,7 +307,7 @@ Convert a 6 digit `hex` color to h s v.
 
 ### kurecolor-hsv-to-hex `(h s v)`
 
-Convert `h` `s` `v` to a 6 digit hex color.
+Convert `h` `s` `v` to a `6` digit hex color.
 
 ```lisp
 (kurecolor-hsv-to-hex 0.5555555555555556 0.65 0.5686274509803921)
@@ -315,7 +321,7 @@ Convert `h` `s` `v` to a 6 digit hex color.
 ### kurecolor-hsv-to-rgb `(h s v)`
 
 Convert hsv (`h` `s` `v`) to red green blue.
-Note: args `h` `s` `v` are expected to be a values from 0..1
+Note: args `h` `s` `v` are expected to be a values from `0.0..1.0`
 
 ```lisp
 (kurecolor-hsv-to-rgb 0.5555555555555556 0.6413793103448275 0.5686274509803921)
@@ -324,7 +330,9 @@ Note: args `h` `s` `v` are expected to be a values from 0..1
 
 ### kurecolor-rgb-to-hex `(rgb)`
 
-Replacement simple `rgb` to hex.
+`rgb` as a list `(r g b)' to `6` digit hex color.
+
+The `r',`g',`b` values can range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-rgb-to-hex '(0.20392156862745098 0.4470588235294118 0.5686274509803921))
@@ -374,7 +382,7 @@ Get the hue of `hex` color.
 
 ### kurecolor-adjust-saturation `(hex amount)`
 
-Adjust the `hex` color saturation by `amount` -1.0..1.0.
+Adjust the `hex` color saturation by `amount` `-1.0..1.0`.
 
 ```lisp
 (kurecolor-adjust-saturation "#006091" -0.1)
@@ -387,7 +395,7 @@ Adjust the `hex` color saturation by `amount` -1.0..1.0.
 
 ### kurecolor-adjust-brightness `(hex amount)`
 
-Adjust the `hex` color brightness by `amount` -1.0..1.0.
+Adjust the `hex` color brightness by `amount` `-1.0..1.0`.
 
 ```lisp
 (kurecolor-adjust-brightness "#FFFFFF" -0.1)
@@ -400,7 +408,7 @@ Adjust the `hex` color brightness by `amount` -1.0..1.0.
 
 ### kurecolor-adjust-hue `(hex amount)`
 
-Adjust the `hex` color hue by `amount` 0.0-1.0.
+Adjust the `hex` color hue by `amount` `0.0..1.0`.
 
 ```lisp
 (kurecolor-adjust-hue "#FF0000" -0.1)
@@ -414,7 +422,7 @@ Adjust the `hex` color hue by `amount` 0.0-1.0.
 
 ### kurecolor-hex-rgba-to-xcode-color-literal `(rgba)`
 
-Convert a hex `rgba` string to an XCode color-literal.
+Convert a hex `rgba` string to an XCode `colorLiteral`.
 
 ```lisp
 (kurecolor-hex-rgba-to-xcode-color-literal "#0E1B21FF")
