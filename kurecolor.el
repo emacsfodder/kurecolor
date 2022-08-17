@@ -16,6 +16,7 @@
 ;; A collection of tools aimed at those working with color, useful for CSS,
 ;; Emacs themes, etc.
 ;;
+;; ![](https://github.com/emacsfodder/kurecolor/actions/workflows/test.yml/badge.svg)
 ;; [![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
 ;; [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 ;;
