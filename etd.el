@@ -6,7 +6,7 @@
 ;; Maintainer: Jason M23 <jasonm23@gmail.com>
 ;; Created: August 14, 2022
 ;; Modified: August 14, 2022
-;; Version: 1.4.0
+;; Version: 1.4.2
 ;; Keywords: tests examples documentation markdown
 ;; Homepage: https://github.com/emacsfodder/kurecolor
 ;; Package-Requires: ((emacs "24.3"))
