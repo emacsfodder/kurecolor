@@ -34,6 +34,8 @@ emacs --batch \
   -l ./kurecolor.el \
   -l ./kurecolor-examples.el \
   --eval "(ert-run-tests-batch-and-exit)"
+exitcode=$?  
 
 echo "
 ════════════════════════════════════════════════════════════════════════════════"
+exit $exitcode
