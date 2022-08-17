@@ -38,7 +38,7 @@
 (defun examples-to-should-1 (examples)
   "Create one `should' from EXAMPLES."
   (let ((actual (car examples))
-        (expected (caddr examples)))
+        (expected (car (cddr examples))))
     `(let ((previous-match-data (match-data)))
        (should (equal-including-properties ,actual ,expected))
        (should (equal (match-data) previous-match-data)))))
@@ -48,7 +48,7 @@
   (let (result)
     (while examples
       (setq result (cons (examples-to-should-1 examples) result))
-      (setq examples (cdddr examples)))
+      (setq examples (cdr (cddr examples))))
     (nreverse result)))
 
 (defmacro defexamples (cmd &rest examples)
@@ -77,7 +77,7 @@
 (defun example-to-string (example)
   "EXAMPLE to string."
   (let ((actual (car example))
-        (expected (caddr example)))
+        (expected (car (cddr example))))
     (cl-reduce
      (lambda (string regexp)
        (replace-regexp-in-string
@@ -99,14 +99,14 @@
 (defun docs--signature (cmd)
   "Get signature for CMD."
   (if (eq 'macro (car cmd))
-      (caddr cmd)
+      (car (cddr cmd))
     (cadr cmd)))
 
 (defun docs--docstring (cmd)
   "Get docstring for CMD."
   (if (eq 'macro (car cmd))
-      (cadddr cmd)
-    (caddr cmd)))
+      (car (cdr (cddr cmd)))
+    (car (cddr cmd))))
 
 (defun quote-and-downcase (string)
   "Wrap STRING in backquotes for markdown."
