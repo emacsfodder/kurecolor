@@ -4,7 +4,7 @@
 ;;
 ;;; Version: 1.4.0
 ;;
-;;; Package-Requires: ((emacs "28.1") (s "1.12"))
+;;; Package-Requires: ((emacs "25.1") (s "1.12"))
 ;;
 ;;; Homepage: https://github.com/emacsfodder/kurecolor.el
 ;;
@@ -288,7 +288,7 @@ When region not active, act on the whole buffer."
 
 (defun kurecolor-hex-get-brightness (hex)
   "Get the brightness of HEX color."
-  (caddr (kurecolor-hex-to-hsv hex)))
+  (cadr (cdr (kurecolor-hex-to-hsv hex))))
 
 (defun kurecolor-hex-set-brightness (hex val)
   "Change a HEX color's brightness VAL, amount values from 0.0-1.0.
@@ -352,7 +352,7 @@ Valid css `rgb()' `rgba()' values are supported."
                    cssrgb))))
     (cl-destructuring-bind (r g b a)
         (mapcar 'kurecolor-css-rgb-value-to-number rgb)
-      (let ((a (if (string= "" (cadddr rgb))
+      (let ((a (if (string= "" (cadr (cddr rgb)))
                    1.0
                  a)))
         (if hexrgba
