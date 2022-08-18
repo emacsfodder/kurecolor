@@ -2,9 +2,9 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.4.3
+;;; Version: 1.4.4
 ;;
-;;; Package-Requires: ((emacs "25.1") (s "1.12"))
+;;; Package-Requires: ((emacs "24.1") (s "1.12"))
 ;;
 ;;; Homepage: https://github.com/emacsfodder/kurecolor.el
 ;;
@@ -16,11 +16,11 @@
 ;; A collection of tools aimed at those working with color, useful for CSS,
 ;; Emacs themes, etc.
 ;;
-;; ![](https://github.com/emacsfodder/kurecolor/actions/workflows/test.yml/badge.svg)
+;; [![](https://github.com/emacsfodder/kurecolor/actions/workflows/kurecolor-tests.yml/badge.svg)](https://github.com/emacsfodder/kurecolor/actions/workflows/kurecolor-tests.yml)
 ;; [![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
 ;; [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 ;;
-;; When using kurecolor commands, I suggest using rainbow-mode for instant feedback on color changes.
+;; Use rainbow-mode when using kurecolor commands, for instant feedback on color changes.
 ;;
 ;; ## Installing
 ;;
@@ -57,12 +57,23 @@
 ;;
 ;;; Code:
 
-(require 's)
-(eval-when-compile
-  (require 'cl-lib))
-
 (unless (>= emacs-major-version 24)
   (error "Requires Emacs 24.1 or later"))
+
+(eval-when-compile
+ (if (and
+       (= 24 emacs-major-version)
+       (<= emacs-minor-version 2))
+     (progn
+      (require 'cl)
+      (defalias #'cl-plusp #'plusp)
+      (defalias #'cl-destructuring-bind #'destructuring-bind)
+      (defalias #'cl-minusp #'minusp)
+      (defalias #'cl-plusp #'plusp))
+   (require 'cl-lib)))
+
+(require 's)
+(require 'dash)
 
 (defgroup kurecolor nil
   "Kurecolor customizations."
@@ -93,7 +104,7 @@
   :group 'kurecolor)
 
 (defun kurecolor-hex-to-rgb (hex)
-  "Convert a `6' digit HEX color to a list `(r g b)'.
+  "Convert a `rgb' HEX color to a list `(r g b)'.
 
 The `r',`g',`b' values range between `0.0..1.0'."
   (setq hex (replace-regexp-in-string "#" "" hex))
@@ -103,9 +114,14 @@ The `r',`g',`b' values range between `0.0..1.0'."
                 (substring hex 4 6))))
 
 (defun kurecolor-hex-to-rgba (hex)
-  "Convert a `8' digit `rgba' HEX color to a list `(r g b a)'.
+  "Convert a `rgba' HEX color to a list `(r g b a)'.
 
-The `r', `g', `b' `a' values can range between `0.0..1.0'."
+`rgba' HEX colors = `#RRGGBBAA' (i.e. CSS hex rgba)
+
+e.g. `#FFFFFF00' white with no opacity.
+     `#000000FF' black with no transparency.
+
+The returned list `(rgba)' values will range between `0.0..1.0'."
   (if (= (length hex) 9)
    (let* ((hex (replace-regexp-in-string "#" "" hex))
           (rgba (mapcar #'(lambda (s)
@@ -119,15 +135,15 @@ The `r', `g', `b' `a' values can range between `0.0..1.0'."
    (user-error "Hex color %s does not contain an alpha value")))
 
 (defun kurecolor-hex-to-hsv (hex)
-  "Convert a `6' digit HEX color to `h' `s' `v'."
+  "Convert a `rgb' HEX color to `h' `s' `v'."
   (kurecolor-rgb-to-hsv (kurecolor-hex-to-rgb hex)))
 
 (defun kurecolor-hsv-to-hex (h s v)
-  "Convert H S V to a `6' digit hex color."
+  "Convert H S V to a `rgb' hex color."
   (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb h s v)))
 
 (defun kurecolor-rgb-to-hex (rgb)
-  "RGB as a list `(r g b)' to `6' digit hex color.
+  "RGB as a list `(r g b)' to `rgb' hex color.
 
 The `r',`g',`b' values can range between `0.0..1.0'."
   (cl-destructuring-bind
@@ -227,43 +243,6 @@ For example, to set the brightness on all colors in region to 50%.
            (replace-string-in-region color re-colored a b)
            (goto-char b))))))
 
-(defun kurecolor-hex-set-saturation-in-region (saturation)
-  "Set the SATURATION of all hex colors found in region.
-When region not active, act on the whole buffer."
-  (interactive "nSet saturation (0.0..1.0): ")
-  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-saturation saturation))
-
-(defun kurecolor-hex-set-brightness-in-region (brightness)
-  "Set the BRIGHTNESS of all hex colors found in region.
-When region not active, act on the whole buffer."
-  (interactive "nSet brightness (0.0..1.0): ")
-  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-brightness brightness))
-
-(defun kurecolor-hex-set-hue-in-region (hue)
-  "Set the HUE of all hex colors found in region (BEGIN END).
-When region not active, act on the whole buffer."
-  (interactive "nSet hue for all colors (0°..360°): ")
-  (let ((hue (/ hue 360.0)))
-    (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-hue hue)))
-
-(defun kurecolor-hex-adjust-saturation-in-region (saturation)
-  "Adjust the SATURATION on all hex colors found in region.
-When region not active, act on the whole buffer."
-  (interactive "nAdjust saturation (-1.0..1.0): ")
-  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-saturation saturation))
-
-(defun kurecolor-hex-adjust-brightness-in-region (brightness)
-  "Set the BRIGHTNESS of all hex colors found in region.
-When region not active, act on the whole buffer."
-  (interactive "nAdjust brightness (-1.0..1.0): ")
-  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-brightness brightness))
-
-(defun kurecolor-hex-adjust-in-region (hue)
-  "Set the HUE of all hex colors found in region (BEGIN END).
-When region not active, act on the whole buffer."
-  (interactive "nAdjust hue for all colors (-360°..+360°): ")
-  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-hue hue))
-
 (defun kurecolor-adjust-brightness (hex amount)
   "Adjust the HEX color brightness by AMOUNT `-1.0..1.0'."
   (cl-destructuring-bind (hue sat val) (kurecolor-hex-to-hsv hex)
@@ -299,19 +278,19 @@ When region not active, act on the whole buffer."
 
 (defun kurecolor-hex-set-brightness (hex val)
   "Change a HEX color's brightness VAL, amount values from `0.0..1.0'.
-returns a `6' digit hex color."
+returns a `rgb' hex color."
   (cl-destructuring-bind (hue sat skip) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-hex-set-hue (hex hue)
   "Change a HEX color's HUE, amount values from `0.0..1.0'.
-returns a `6' digit hex color."
+returns a `rgb' hex color."
   (cl-destructuring-bind (skip sat val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
 (defun kurecolor-hex-set-saturation (hex sat)
   "Change a HEX color's saturation SAT, amount values from `0.0..1.0'.
-returns a `6' digit hex color."
+returns a `rgb' hex color."
   (cl-destructuring-bind (hue skip val) (kurecolor-hex-to-hsv hex)
     (kurecolor-rgb-to-hex (kurecolor-hsv-to-rgb hue sat val))))
 
@@ -329,11 +308,12 @@ returns a `6' digit hex color."
 
 (defun kurecolor-interpolate (color1 color2)
   "Interpolate two hex colors COLOR1 and COLOR2, to get their mixed color."
-  (cl-destructuring-bind (r g b)
-      (mapcar #'(lambda (n) (* (/ n 2) 255.0))
-              (cl-mapcar '+ (kurecolor-hex-to-rgb color1)
-                         (kurecolor-hex-to-rgb color2)))
-    (format "#%02X%02X%02X" r g b)))
+  (let ((cons+ (lambda (c) (+ (car c) (cdr c)))))
+    (cl-destructuring-bind (r g b)
+       (mapcar #'(lambda (n) (* (/ n 2) 255.0))
+                 (-zip-with '+ (kurecolor-hex-to-rgb color1)
+                               (kurecolor-hex-to-rgb color2)))
+      (format "#%02X%02X%02X" r g b))))
 
 (defun kurecolor-clamp (num min max)
   "Clamp NUM to range of MIN MAX."
@@ -347,7 +327,7 @@ returns a `6' digit hex color."
   "Convert a CSSRGB (`rgb()' or `rgba()') color to hex.
 
 When HEXRGBA is non-nil the hex color string will be RGBA.
-If css `alpha' value isn't present, it will be set as `1.0'
+If css `alpha' value isn\\='t present, it will be set as `1.0'
 i.e. no transparency
 
 Valid css `rgb()' `rgba()' values are supported."
@@ -422,6 +402,49 @@ From number `0-255' or percentage, to `0-255'."
    (kurecolor-xcode-color-literal-to-hex-rgba color-literal) 0 7))
 
 ;;; Interactive functions
+
+;;;###autoload
+(defun kurecolor-hex-set-saturation-in-region (saturation)
+  "Set the SATURATION of all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nSet saturation (0.0..1.0): ")
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-saturation saturation))
+
+;;;###autoload
+(defun kurecolor-hex-set-brightness-in-region (brightness)
+  "Set the BRIGHTNESS of all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nSet brightness (0.0..1.0): ")
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-brightness brightness))
+
+;;;###autoload
+(defun kurecolor-hex-set-hue-in-region (hue)
+  "Set the HUE of all hex colors found in region (BEGIN END).
+When region not active, act on the whole buffer."
+  (interactive "nSet hue for all colors (0°..360°): ")
+  (let ((hue (/ hue 360.0)))
+    (kurecolor--all-hex-colors-in-region-apply 'kurecolor-hex-set-hue hue)))
+
+;;;###autoload
+(defun kurecolor-hex-adjust-saturation-in-region (saturation)
+  "Adjust the SATURATION on all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nAdjust saturation (-1.0..1.0): ")
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-saturation saturation))
+
+;;;###autoload
+(defun kurecolor-hex-adjust-brightness-in-region (brightness)
+  "Set the BRIGHTNESS of all hex colors found in region.
+When region not active, act on the whole buffer."
+  (interactive "nAdjust brightness (-1.0..1.0): ")
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-brightness brightness)
+
+;;;###autoload
+;;;(defun kurecolor-hex-adjust-in-region (hue)
+  "Set the HUE of all hex colors found in region (BEGIN END).
+When region not active, act on the whole buffer."
+  (interactive "nAdjust hue for all colors (-360°..+360°): ")
+  (kurecolor--all-hex-colors-in-region-apply 'kurecolor-adjust-hue hue))
 
 ;;;###autoload
 (defun kurecolor-increase-brightness-by-step (x)

@@ -3,11 +3,11 @@
 A collection of tools aimed at those working with color, useful for CSS,
 Emacs themes, etc.
 
-![](https://github.com/emacsfodder/kurecolor/actions/workflows/test.yml/badge.svg)
+[![](https://github.com/emacsfodder/kurecolor/actions/workflows/kurecolor-tests.yml/badge.svg)](https://github.com/emacsfodder/kurecolor/actions/workflows/kurecolor-tests.yml)
 [![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
 [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 
-When using kurecolor commands, I suggest using rainbow-mode for instant feedback on color changes.
+Use rainbow-mode when using kurecolor commands, for instant feedback on color changes.
 
 ## Installing
 
@@ -180,7 +180,7 @@ From number `0-255` or percentage, to `0-255`.
 ### kurecolor-hex-set-hue `(hex hue)`
 
 Change a `hex` color's `hue`, amount values from `0.0..1.0`.
-returns a `6` digit hex color.
+returns a `rgb` hex color.
 
 ```lisp
 (kurecolor-hex-set-hue "#FF7700" 0.5)
@@ -194,7 +194,7 @@ returns a `6` digit hex color.
 ### kurecolor-hex-set-saturation `(hex sat)`
 
 Change a `hex` color's saturation `sat`, amount values from `0.0..1.0`.
-returns a `6` digit hex color.
+returns a `rgb` hex color.
 
 ```lisp
 (kurecolor-hex-set-saturation "#FF7700" 0.5)
@@ -208,7 +208,7 @@ returns a `6` digit hex color.
 ### kurecolor-hex-set-brightness `(hex val)`
 
 Change a `hex` color's brightness `val`, amount values from `0.0..1.0`.
-returns a `6` digit hex color.
+returns a `rgb` hex color.
 
 ```lisp
 (kurecolor-hex-set-brightness "#FF7700" 0.5)
@@ -262,7 +262,7 @@ Copy the saturation of `source` to `target`.
 
 ### kurecolor-hex-to-rgb `(hex)`
 
-Convert a `6` digit `hex` color to a list `(r g b)'.
+Convert a `rgb` `hex` color to a list `(r g b)'.
 
 The `r',`g',`b` values range between `0.0..1.0`.
 
@@ -278,9 +278,14 @@ The `r',`g',`b` values range between `0.0..1.0`.
 
 ### kurecolor-hex-to-rgba `(hex)`
 
-Convert a `8` digit `rgba` `hex` color to a list `(r g b a)'.
+Convert a `rgba` `hex` color to a list `(r g b a)'.
 
-The `r`, `g`, `b` `a` values can range between `0.0..1.0`.
+`rgba` `hex` colors = `#`rrggbbaa`` (i.e. `css` hex rgba)
+
+e.g. `#`ffffff00`` white with no opacity.
+     `#000000FF` black with no transparency.
+
+The returned list `(rgba)` values will range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-hex-to-rgba "#34729100")
@@ -294,7 +299,7 @@ The `r`, `g`, `b` `a` values can range between `0.0..1.0`.
 
 ### kurecolor-hex-to-hsv `(hex)`
 
-Convert a `6` digit `hex` color to `h` `s` `v`.
+Convert a `rgb` `hex` color to `h` `s` `v`.
 
 ```lisp
 (kurecolor-hex-to-hsv "#347291")
@@ -307,7 +312,7 @@ Convert a `6` digit `hex` color to `h` `s` `v`.
 
 ### kurecolor-hsv-to-hex `(h s v)`
 
-Convert `h` `s` `v` to a `6` digit hex color.
+Convert `h` `s` `v` to a `rgb` hex color.
 
 ```lisp
 (kurecolor-hsv-to-hex 0.5555555555555556 0.65 0.5686274509803921)
@@ -330,7 +335,7 @@ Note: args `h` `s` `v` are expected to be a values from `0.0..1.0`
 
 ### kurecolor-rgb-to-hex `(rgb)`
 
-`rgb` as a list `(r g b)' to `6` digit hex color.
+`rgb` as a list `(r g b)' to `rgb` hex color.
 
 The `r',`g',`b` values can range between `0.0..1.0`.
 

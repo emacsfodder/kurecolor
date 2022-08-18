@@ -3,11 +3,11 @@
 A collection of tools aimed at those working with color, useful for CSS,
 Emacs themes, etc.
 
-![](https://github.com/emacsfodder/kurecolor/actions/workflows/test.yml/badge.svg)
+[![](https://github.com/emacsfodder/kurecolor/actions/workflows/kurecolor-tests.yml/badge.svg)](https://github.com/emacsfodder/kurecolor/actions/workflows/kurecolor-tests.yml)
 [![MELPA](https://stable.melpa.org/packages/kurecolor-badge.svg)](https://stable.melpa.org/#/kurecolor)
 [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 
-When using kurecolor commands, I suggest using rainbow-mode for instant feedback on color changes.
+Use rainbow-mode when using kurecolor commands, for instant feedback on color changes.
 
 ## Installing
 

@@ -6,10 +6,10 @@
 ;; Maintainer: Jason M23 <jasonm23@gmail.com>
 ;; Created: August 14, 2022
 ;; Modified: August 14, 2022
-;; Version: 1.4.3
+;; Version: 1.4.4
 ;; Keywords: tests examples documentation markdown
 ;; Homepage: https://github.com/emacsfodder/kurecolor
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "24.1"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -32,13 +32,22 @@
 
 (require 'ert)
 
+(unless (>= emacs-major-version 24)
+  (error "Requires Emacs 24.1 or later"))
+
+(if (and
+      (= 24 emacs-major-version)
+      (<= emacs-minor-version 2))
+    (require 'cl)
+  (require 'cl-lib))
+
 (defvar etd-testing t "When set to t run tests, when set to nil generate documents.")
 (defvar functions '() "Collected functions.")
 
 (defun examples-to-should-1 (examples)
   "Create one `should' from EXAMPLES."
   (let ((actual (car examples))
-        (expected (car (cddr examples))))
+        (expected (caddr examples)))
     `(let ((previous-match-data (match-data)))
        (should (equal-including-properties ,actual ,expected))
        (should (equal (match-data) previous-match-data)))))
@@ -48,7 +57,7 @@
   (let (result)
     (while examples
       (setq result (cons (examples-to-should-1 examples) result))
-      (setq examples (cdr (cddr examples))))
+      (setq examples (cdddr examples)))
     (nreverse result)))
 
 (defmacro defexamples (cmd &rest examples)
@@ -77,12 +86,12 @@
 (defun example-to-string (example)
   "EXAMPLE to string."
   (let ((actual (car example))
-        (expected (car (cddr example))))
+        (expected (caddr example)))
     (cl-reduce
-     (lambda (string regexp)
+     (lambda (str regexp)
        (replace-regexp-in-string
         (car regexp) (cdr regexp)
-        string t t))
+        str t t))
      '(("\r" . "\\r")
        ("\t" . "\\t")
        ("\\\\\\?" . "?"))
@@ -99,14 +108,14 @@
 (defun docs--signature (cmd)
   "Get signature for CMD."
   (if (eq 'macro (car cmd))
-      (car (cddr cmd))
+      (caddr cmd)
     (cadr cmd)))
 
 (defun docs--docstring (cmd)
   "Get docstring for CMD."
   (if (eq 'macro (car cmd))
-      (car (cdr (cddr cmd)))
-    (car (cddr cmd))))
+      (cadddr cmd)
+    (caddr cmd)))
 
 (defun quote-and-downcase (string)
   "Wrap STRING in backquotes for markdown."
