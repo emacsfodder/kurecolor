@@ -35,11 +35,12 @@
 (unless (>= emacs-major-version 24)
   (error "Requires Emacs 24.1 or later"))
 
-(if (and
+(eval-when-compile
+ (if (and
       (= 24 emacs-major-version)
       (<= emacs-minor-version 2))
     (require 'cl)
-  (require 'cl-lib))
+  (require 'cl-lib)))
 
 (defvar etd-testing t "When set to t run tests, when set to nil generate documents.")
 (defvar functions '() "Collected functions.")
