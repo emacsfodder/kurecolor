@@ -64,7 +64,8 @@
  (if (= 24 emacs-major-version)
      (progn
       (require 'cl)
-      (require 'cl-lib t))
+      (when (locate-library "cl-lib")
+        (require 'cl-lib)))
    (require 'cl-lib)))
 
 (require 's)

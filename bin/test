@@ -2,6 +2,8 @@
 dash="$(dirname "$(find ~/.emacs.d | grep "/dash.el$" | tail -1)")"
 s="$(dirname "$(find ~/.emacs.d | grep "/s.el$" | tail -1)")"
 
+EMACS="${EMACS:=emacs}"
+
 cat <<INFO
 ════════════════════════════════════════════════════════════════════════════════
  _                             _
@@ -21,9 +23,11 @@ Required packages present:
 Dash: $dash
    S: $s
 ════════════════════════════════════════════════════════════════════════════════
+$("$EMACS" --version)
+════════════════════════════════════════════════════════════════════════════════
 INFO
 
-emacs --batch \
+"$EMACS" --batch \
   -eval "(add-to-list 'load-path \"${dash}\")" \
   -eval "(add-to-list 'load-path \"${s}\")" \
   -eval "(add-to-list 'load-path \".\")" \

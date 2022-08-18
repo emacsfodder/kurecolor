@@ -39,7 +39,8 @@
  (if (= 24 emacs-major-version)
      (progn
       (require 'cl)
-      (require 'cl-lib t))
+      (when (locate-library "cl-lib")
+        (require 'cl-lib)))
    (require 'cl-lib)))
 
 (defvar etd-testing t "When set to t run tests, when set to nil generate documents.")
