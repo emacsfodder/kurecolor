@@ -65,7 +65,9 @@
      (progn
       (require 'cl)
       (when (locate-library "cl-lib")
-        (require 'cl-lib)))
+        (require 'cl-lib))
+      (when (not (fboundp 'cl-destructuring-bind))
+        (defalias 'cl-destructuring-bind 'destructuring-bind)))
    (require 'cl-lib)))
 
 (require 's)
