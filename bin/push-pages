@@ -1,0 +1,8 @@
+#!/bin/sh
+
+git clone git@github.com:emacsfodder/kurecolor temp
+mv index.md temp
+git --work-tree temp --git-dir temp/.git checkout gh-pages
+git --work-tree temp --git-dir temp/.git commit -a -m "update index.md"
+git --work-tree temp --git-dir temp/.git push origin gh-pages
+rm -rf temp
