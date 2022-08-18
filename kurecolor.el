@@ -272,11 +272,11 @@ For example, to set the brightness on all colors in region to 50%.
 
 (defun kurecolor-hex-get-saturation (hex)
   "Get the saturation of HEX color."
-  (cadr (kurecolor-hex-to-hsv hex)))
+  (nth 1 (kurecolor-hex-to-hsv hex)))
 
 (defun kurecolor-hex-get-brightness (hex)
   "Get the brightness of HEX color."
-  (cadr (cdr (kurecolor-hex-to-hsv hex))))
+  (nth 2 (kurecolor-hex-to-hsv hex)))
 
 (defun kurecolor-hex-set-brightness (hex val)
   "Change a HEX color's brightness VAL, amount values from `0.0..1.0'.
@@ -341,7 +341,7 @@ Valid css `rgb()' `rgba()' values are supported."
                    cssrgb))))
     (cl-destructuring-bind (r g b a)
         (mapcar 'kurecolor-css-rgb-value-to-number rgb)
-      (let ((a (if (string= "" (cadr (cddr rgb)))
+      (let ((a (if (string= "" (nth 3 rgb))
                    1.0
                  a)))
         (if hexrgba

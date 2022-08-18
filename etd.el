@@ -49,7 +49,7 @@
 (defun examples-to-should-1 (examples)
   "Create one `should' from EXAMPLES."
   (let ((actual (car examples))
-        (expected (caddr examples)))
+        (expected (nth 2 examples)))
     `(let ((previous-match-data (match-data)))
        (should (equal-including-properties ,actual ,expected))
        (should (equal (match-data) previous-match-data)))))
@@ -59,7 +59,7 @@
   (let (result)
     (while examples
       (setq result (cons (examples-to-should-1 examples) result))
-      (setq examples (cdddr examples)))
+      (setq examples (cdr (cddr examples))))
     (nreverse result)))
 
 (defmacro defexamples (cmd &rest examples)
@@ -88,7 +88,7 @@
 (defun example-to-string (example)
   "EXAMPLE to string."
   (let ((actual (car example))
-        (expected (caddr example)))
+        (expected (nth 2 example)))
     (cl-reduce
      (lambda (str regexp)
        (replace-regexp-in-string
@@ -104,20 +104,20 @@
   (let (result)
     (while examples
       (setq result (cons (example-to-string examples) result))
-      (setq examples (cdddr examples)))
+      (setq examples (cdr (cddr examples))))
     (nreverse result)))
 
 (defun docs--signature (cmd)
   "Get signature for CMD."
   (if (eq 'macro (car cmd))
-      (caddr cmd)
+      (nth 2 cmd)
     (cadr cmd)))
 
 (defun docs--docstring (cmd)
   "Get docstring for CMD."
   (if (eq 'macro (car cmd))
-      (cadddr cmd)
-    (caddr cmd)))
+      (nth 3 cmd)
+    (nth 2 cmd)))
 
 (defun quote-and-downcase (string)
   "Wrap STRING in backquotes for markdown."
@@ -142,8 +142,8 @@
       ""
     (let ((command-name (car function))
           (signature (cadr function))
-          (docstring (quote-docstring (caddr function)))
-          (examples (cadddr function)))
+          (docstring (quote-docstring (nth 2 function)))
+          (examples (nth 3 function)))
       (format "### %s %s\n\n%s\n\n```lisp\n%s\n```\n"
               command-name
               (if signature (format "`%s`" signature) "")
@@ -233,8 +233,8 @@
       (setq first (cons (car list) first))
       (when (cadr list)
         (setq first (cons (cadr list) first))
-        (when (caddr list)
-          (setq first (cons (caddr list) first)))))
+        (when (nth 2 list)
+          (setq first (cons (nth 2 list) first)))))
     (nreverse first)))
 
 (provide 'etd)
