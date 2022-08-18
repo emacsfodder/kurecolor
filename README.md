@@ -262,9 +262,9 @@ Copy the saturation of `source` to `target`.
 
 ### kurecolor-hex-to-rgb `(hex)`
 
-Convert a `rgb` `hex` color to a list `(r g b)'.
+Convert a `rgb` `hex` color to a list `(r g b)`.
 
-The `r',`g',`b` values range between `0.0..1.0`.
+The `r`,`g`,`b` values range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-hex-to-rgb "#347291")
@@ -278,7 +278,7 @@ The `r',`g',`b` values range between `0.0..1.0`.
 
 ### kurecolor-hex-to-rgba `(hex)`
 
-Convert a `rgba` `hex` color to a list `(r g b a)'.
+Convert a `rgba` `hex` color to a list `(r g b a)`.
 
 `rgba` `hex` colors = `#`rrggbbaa`` (i.e. `css` hex rgba)
 
@@ -335,9 +335,9 @@ Note: args `h` `s` `v` are expected to be a values from `0.0..1.0`
 
 ### kurecolor-rgb-to-hex `(rgb)`
 
-`rgb` as a list `(r g b)' to `rgb` hex color.
+`rgb` as a list `(r g b)` to `rgb` hex color.
 
-The `r',`g',`b` values can range between `0.0..1.0`.
+The `r`,`g`,`b` values can range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-rgb-to-hex '(0.20392156862745098 0.4470588235294118 0.5686274509803921))

@@ -127,14 +127,20 @@
   "Quote DOCSTRING."
   (if (null docstring)
       ""
-   (let (case-fold-search)
-    (replace-regexp-in-string
-     "`\\([^ ]+\\)'"
-     "`\\1`"
+    (let ((case-fold-search nil))
      (replace-regexp-in-string
-      "\\b\\([A-Z][A-Z0-9-]*\\)\\b"
-      'quote-and-downcase
-      docstring t)))))
+       "\\\\="
+       ""
+       (replace-regexp-in-string
+         "\\([a-z]+\\)`\\([a-z]+\\)"
+         "\\1'\\2"
+         (replace-regexp-in-string
+           "`\\(.*?\\)'"
+           "`\\1`"
+           (replace-regexp-in-string
+            "\\b\\([A-Z][A-Z0-9-]*\\)\\b"
+            'quote-and-downcase
+            docstring t)))))))
 
 (defun function-to-md (function)
   "FUNCTION to markdown."
