@@ -61,15 +61,10 @@
   (error "Requires Emacs 24.1 or later"))
 
 (eval-when-compile
- (if (and
-       (= 24 emacs-major-version)
-       (<= emacs-minor-version 2))
+ (if (= 24 emacs-major-version)
      (progn
       (require 'cl)
-      (defalias #'cl-plusp #'plusp)
-      (defalias #'cl-destructuring-bind #'destructuring-bind)
-      (defalias #'cl-minusp #'minusp)
-      (defalias #'cl-plusp #'plusp))
+      (require 'cl-lib t))
    (require 'cl-lib)))
 
 (require 's)
