@@ -9,6 +9,8 @@ Emacs themes, etc.
 
 Use rainbow-mode when using kurecolor commands, for instant feedback on color changes.
 
+![](kurecolor.gif)
+
 ## Installing
 
 Kurecolor is on MELPA, you can install using `package.el`
