@@ -442,8 +442,6 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 
 ### kurecolor-xcode-literal-to-hex-rgba 
 
-
-
 ```lisp
 (kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
  ⇒ "#163242FF"
@@ -455,8 +453,6 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 
 ### kurecolor-xcode-literal-to-hex-rgb 
 
-
-
 ```lisp
 (kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.0, alpha: 1)")
  ⇒ "#0E1C00"
@@ -465,7 +461,6 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 (kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
  ⇒ "#ECF3F6"
 ```
-
 
 ### Test/Examples
 
