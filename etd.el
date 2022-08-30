@@ -51,9 +51,7 @@
   "Create one `should' from EXAMPLES."
   (let ((actual (car examples))
         (expected (nth 2 examples)))
-    `(let ((previous-match-data (match-data)))
-       (should (equal-including-properties ,actual ,expected))
-       (should (equal (match-data) previous-match-data)))))
+    `(should (equal-including-properties ,actual ,expected))))
 
 (defun examples-to-should (examples)
   "Create `should' for all EXAMPLES."
