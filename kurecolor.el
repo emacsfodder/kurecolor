@@ -2,9 +2,9 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.4.4
+;;; Version: 1.5.0
 ;;
-;;; Package-Requires: ((emacs "24.1") (s "1.12"))
+;;; Package-Requires: ((emacs "24.4") (s "1.12"))
 ;;
 ;;; Homepage: https://github.com/emacsfodder/kurecolor.el
 ;;

@@ -10,7 +10,7 @@
 ;; Keywords: lisp tools extensions
 ;;
 ;; Homepage: https://github.com/emacsfodder/kurecolor
-;; Package-Requires: ((emacs "24.1"))
+;; Package-Requires: ((emacs "24.4"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
