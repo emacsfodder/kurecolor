@@ -3,11 +3,12 @@
 ;; Copyright (C) 2022 Jason M23
 ;;
 ;; Author: Jason M23 <jasonm23@gmail.com>
-;; Maintainer: Jason M23 <jasonm23@gmail.com>
+;;
 ;; Created: August 14, 2022
 ;; Modified: August 14, 2022
-;; Version: 1.4.4
-;; Keywords: tests examples documentation markdown
+;; Version: 1.4.5
+;; Keywords: lisp tools extensions
+;;
 ;; Homepage: https://github.com/emacsfodder/kurecolor
 ;; Package-Requires: ((emacs "24.1"))
 ;;
@@ -108,7 +109,7 @@
     (nreverse result)))
 
 (defun docs--signature (cmd)
-  "Get signature for CMD."
+  "Get function signature for CMD."
   (if (eq 'macro (car cmd))
       (nth 2 cmd)
     (cadr cmd)))
