@@ -17,6 +17,17 @@
 (require 'dash)
 (require 'kurecolor)
 
+(def-example-group "Color range functions"
+ (defexamples color-hue-group
+  (kurecolor-hue-group "#FF0005") => 'red
+  (kurecolor-hue-group "#00FF00") => 'green
+  (kurecolor-hue-group "#FF00FF") => 'magenta
+  (kurecolor-hue-group "#00FFFF") => 'cyan
+  (kurecolor-hue-group "#0000FF") => 'blue-magenta
+  (kurecolor-hue-group "#FFFF00") => 'yellow-green
+  (kurecolor-hue-group "#FFFF00" kurecolor-hue-ranges) => 'yellow-green
+  (kurecolor-hue-group "#FFFF00" kurecolor-limited-hue-ranges) => 'green))
+
 (def-example-group "Utility functions"
  (defexamples kurecolor-clamp
    (kurecolor-clamp 1 -1.0 1.0)    => 1

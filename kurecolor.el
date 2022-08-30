@@ -105,6 +105,60 @@
   :type 'integer
   :group 'kurecolor)
 
+(defcustom kurecolor-hue-ranges
+  '((red-orange      (10  . 20))
+    (orange-brown    (20  . 40))
+    (orange-yellow   (40  . 50))
+    (yellow          (50  . 60))
+    (yellow-green    (60  . 80))
+    (green           (80  . 140))
+    (green-cyan      (140 . 170))
+    (cyan            (170 . 200))
+    (cyan-blue       (200 . 220))
+    (blue            (220 . 240))
+    (blue-magenta    (240 . 280))
+    (magenta         (280 . 320))
+    (magenta-pink    (320 . 330))
+    (pink            (330 . 345))
+    (red             (345 . 360))
+    (red             (0 . 10))) ;; also red.
+  "Set of perceptual color ranges.
+Please open an issue if you know of a standardized set of hue ranges."
+  :type 'list
+  :group 'kurecolor)
+
+(defcustom kurecolor-limited-hue-ranges
+  '((orange  (20  . 50))
+    (yellow  (50  . 60))
+    (green   (60  . 140))
+    (cyan    (140 . 220))
+    (blue    (220 . 280))
+    (magenta (280 . 345))
+    (red     (345 . 360))
+    (red     (0 . 20)))
+  "Limited set of perceptual color ranges.
+Please open an issue if you know of a standardized set of hue ranges."
+  :type 'list
+  :group 'kurecolor)
+
+(defun kurecolor-hue-group (color &optional hue-ranges)
+  "Return the color hue group for COLOR.
+
+Optionally provide HUE-RANGES, defaults to `kurecolor-hue-ranges'.
+
+Also available is `kurecolor-limited-hue-ranges'"
+  (let ((hue-ranges (or hue-ranges  kurecolor-hue-ranges))
+        (hue (kurecolor-hex-get-hue color)))
+     (-reduce
+      (lambda (acc range)
+        (let ((name (car range))
+              (a (car (cadr range)))
+              (b (cdr (cadr range))))
+            (if (<= a (* hue 360) b)
+                (car range)
+              acc)))
+      hue-ranges)))
+
 (defun kurecolor-hex-to-rgb (hex)
   "Convert a `rgb' HEX color to a list `(r g b)'.
 
