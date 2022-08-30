@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.5.0
+;;; Version: 1.6.0
 ;;
 ;;; Package-Requires: ((emacs "24.4") (s "1.12"))
 ;;
@@ -105,7 +105,7 @@
   :type 'integer
   :group 'kurecolor)
 
-(defcustom kurecolor-hue-ranges
+(defcustom kurecolor-hue-groups
   '((red-orange      (10  . 20))
     (orange-brown    (20  . 40))
     (orange-yellow   (40  . 50))
@@ -120,44 +120,70 @@
     (magenta         (280 . 320))
     (magenta-pink    (320 . 330))
     (pink            (330 . 345))
-    (red             (345 . 360))
-    (red             (0 . 10))) ;; also red.
+    (red             (345 . 10)))
   "Set of perceptual color ranges.
 Please open an issue if you know of a standardized set of hue ranges."
   :type 'list
   :group 'kurecolor)
 
-(defcustom kurecolor-limited-hue-ranges
+(defcustom kurecolor-simple-hue-groups
   '((orange  (20  . 50))
     (yellow  (50  . 60))
     (green   (60  . 140))
     (cyan    (140 . 220))
     (blue    (220 . 280))
     (magenta (280 . 345))
-    (red     (345 . 360))
-    (red     (0 . 20)))
-  "Limited set of perceptual color ranges.
-Please open an issue if you know of a standardized set of hue ranges."
+    (red     (345 . 20)))
+  "Simple set of color groups."
   :type 'list
   :group 'kurecolor)
 
-(defun kurecolor-hue-group (color &optional hue-ranges)
+(defun kurecolor-hue-group (color &optional hue-groups)
   "Return the color hue group for COLOR.
 
-Optionally provide HUE-RANGES, defaults to `kurecolor-hue-ranges'.
+Optionally provide a list of HUE-GROUPS, (default uses `kurecolor-hue-groups'.)
 
-Also available is `kurecolor-limited-hue-ranges'"
-  (let ((hue-ranges (or hue-ranges  kurecolor-hue-ranges))
-        (hue (kurecolor-hex-get-hue color)))
-     (-reduce
-      (lambda (acc range)
-        (let ((name (car range))
-              (a (car (cadr range)))
-              (b (cdr (cadr range))))
-            (if (<= a (* hue 360) b)
-                (car range)
-              acc)))
-      hue-ranges)))
+Also available is `kurecolor-simple-hue-groups',
+both are customizable, or define your own.
+
+This facilitates hue grouping & sorting by a secondary axis.
+
+For example sort a list of colors by some axis (brightness or
+saturation). Then group by hue groups, and sort the groups.
+
+The format of each group in the list is:
+
+    (group-name (n1 . n2))
+
+Where `group-name' is a symbol to name the group,
+`(n1 . n2)' is a hue range specifier (in degrees)
+low `n1' to high `n2'.
+
+A hue range which crosses the apex (i.e. `360°..0°') is permitted."
+  (let* ((init-hue-groups (or hue-groups kurecolor-hue-groups))
+         (hue-groups (-reduce-from
+                      (lambda (acc range)
+                        (let* ((a (car (cadr range)))
+                               (b (cdr (cadr range)))
+                               (r (if (> a b) ;; hue apex check 360..0
+                                      `(,(list (car range) (cons a 360))
+                                        ,(list (car range) (cons 0 b)))
+                                    `(,range))))
+                          (if acc
+                              (concatenate 'list acc r)
+                            r)))
+                      nil
+                      init-hue-groups))
+         (hue (kurecolor-hex-get-hue color)))
+    (-reduce-from
+     (lambda (acc range)
+       (let ((a (car (cadr range)))
+             (b (cdr (cadr range))))
+        (if (<= a (* hue 360) b)
+          (car range)
+         acc)))
+     nil
+     hue-groups)))
 
 (defun kurecolor-hex-to-rgb (hex)
   "Convert a `rgb' HEX color to a list `(r g b)'.
@@ -278,7 +304,7 @@ When region is not set, act on the whole buffer.
 For example, to set the brightness on all colors in region to 50%.
 
 ```
-(kurecolor--all-hex-colors-in-region-apply kurecolor-hex-set-brightness 0.5)
+\(kurecolor--all-hex-colors-in-region-apply kurecolor-hex-set-brightness 0.5)
 ```"
   (let ((regexp "#[[:xdigit:]]\\{3,6\\}")
         (pos (point))

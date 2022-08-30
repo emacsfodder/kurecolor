@@ -9,8 +9,6 @@ Emacs themes, etc.
 
 Use rainbow-mode when using kurecolor commands, for instant feedback on color changes.
 
-![](kurecolor.gif)
-
 ## Installing
 
 Kurecolor is on MELPA, you can install using `package.el`
@@ -18,6 +16,10 @@ Kurecolor is on MELPA, you can install using `package.el`
     M-x package-install kurecolor
 
 - - -
+
+### Color/hue range grouping
+
+* [kurecolor-hue-group](#kurecolor-hue-group-color-optional-hue-groups) `(color &optional hue-groups)`
 
 ### Utility functions
 
@@ -76,6 +78,40 @@ Kurecolor is on MELPA, you can install using `package.el`
 * [kurecolor-hex-rgba-to-xcode-color-literal](#kurecolor-hex-rgba-to-xcode-color-literal-rgba) `(rgba)`
 * [kurecolor-xcode-literal-to-hex-rgba](#kurecolor-xcode-literal-to-hex-rgba) 
 * [kurecolor-xcode-literal-to-hex-rgb](#kurecolor-xcode-literal-to-hex-rgb) 
+
+
+### kurecolor-hue-group `(color &optional hue-groups)`
+
+Return the color hue group for `color`.
+
+Optionally provide a list of `hue-groups`, (default uses `kurecolor-hue-groups`.)
+
+Also available is `kurecolor-simple-hue-groups`,
+both are customizable, or define your own.
+
+This facilitates hue grouping & sorting by a secondary axis.
+
+For example sort a list of colors by some axis (brightness or
+saturation). Then group by hue groups, and sort the groups.
+
+The format of each group in the list is:
+
+    (group-name (n1 . n2))
+
+Where `group-name` is a symbol to name the group,
+`(n1 . n2)` is a hue range specifier (in degrees)
+low `n1` to high `n2`.
+
+`a` hue range which crosses the apex (i.e. `360°..0°`) is permitted.
+
+```lisp
+(kurecolor-hue-group "#00FF00" '((group-a (340 . 120)) (group-b (120 . 240)) (group-c (240 . 340))))
+ ⇒ 'group-b
+(kurecolor-hue-group "#FFFF00" kurecolor-hue-ranges)
+ ⇒ 'yellow-green
+(kurecolor-hue-group "#FF0000")
+ ⇒ 'red
+```
 
 
 ### kurecolor-clamp `(num min max)`
@@ -442,6 +478,8 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 
 ### kurecolor-xcode-literal-to-hex-rgba 
 
+
+
 ```lisp
 (kurecolor-xcode-color-literal-to-hex-rgba "#colorLiteral(red: 0.0864074271, green: 0.1963072013, blue: 0.2599330357, alpha: 1)")
  ⇒ "#163242FF"
@@ -453,6 +491,8 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 
 ### kurecolor-xcode-literal-to-hex-rgb 
 
+
+
 ```lisp
 (kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.05882352941, green: 0.1098039216, blue: 0.0, alpha: 1)")
  ⇒ "#0E1C00"
@@ -461,6 +501,7 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 (kurecolor-xcode-color-literal-to-hex-rgb "#colorLiteral(red: 0.9280523557, green: 0.9549868208, blue: 0.9678013393, alpha: 1)")
  ⇒ "#ECF3F6"
 ```
+
 
 ### Test/Examples
 

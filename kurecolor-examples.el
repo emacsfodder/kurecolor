@@ -1,32 +1,33 @@
 ;;; kurecolor-examples --- tests for Kurecolor
 ;; -*- lexical-binding: t; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)))); -*-
 ;;
-;;; Version: 1.5.0
+;; Version: 1.6.0
 ;;
 ;;; Commentary:
 ;; Uses a prototype ert test wrapper `./etd.el'.
 ;;
 ;;; ;;; Code:
-;;
-;; Local Variables:
-;; eval: (when (fboundp 'rainbow-mode) (rainbow-mode +1))
-;; no-byte-compile: t
-;; End:
 
 (require 'etd)
 (require 'dash)
 (require 'kurecolor)
 
-(def-example-group "Color range functions"
- (defexamples color-hue-group
-  (kurecolor-hue-group "#FF0005") => 'red
+(def-example-group "Color/hue range grouping"
+ (defexamples kurecolor-hue-group
+  (kurecolor-hue-group
+   "#00FF00"
+   '((group-a (340 . 120))
+     (group-b (120 . 240))
+     (group-c (240 . 340))))
+  => 'group-b
+  (kurecolor-hue-group "#FFFF00" kurecolor-hue-groups) => 'yellow-green
+  (kurecolor-hue-group "#FF0000") => 'red
   (kurecolor-hue-group "#00FF00") => 'green
   (kurecolor-hue-group "#FF00FF") => 'magenta
   (kurecolor-hue-group "#00FFFF") => 'cyan
   (kurecolor-hue-group "#0000FF") => 'blue-magenta
   (kurecolor-hue-group "#FFFF00") => 'yellow-green
-  (kurecolor-hue-group "#FFFF00" kurecolor-hue-ranges) => 'yellow-green
-  (kurecolor-hue-group "#FFFF00" kurecolor-limited-hue-ranges) => 'green))
+  (kurecolor-hue-group "#FFFF00" kurecolor-simple-hue-groups) => 'green))
 
 (def-example-group "Utility functions"
  (defexamples kurecolor-clamp
@@ -235,3 +236,8 @@
     (kurecolor-xcode-color-literal-to-hex-rgb
      "#colorLiteral(red: 0.6817694399, green: 0.7659880177, blue: 0.802081694, alpha: 1)")
     => "#ADC3CC"))
+
+;; Local Variables:
+;; eval: (when (fboundp 'rainbow-mode) (rainbow-mode +1))
+;; no-byte-compile: t
+;; End:
