@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.6.0
+;;; Version: 1.6.1
 ;;
 ;;; Package-Requires: ((emacs "24.4") (s "1.12"))
 ;;
@@ -66,6 +66,8 @@
       (require 'cl)
       (when (locate-library "cl-lib")
         (require 'cl-lib))
+      (when (not (fboundp 'cl-concatenate))
+        (defalias 'cl-concatenate 'concatenate) 
       (when (not (fboundp 'cl-plusp))
         (defalias 'cl-plusp 'plusp))
       (when (not (fboundp 'cl-minusp))
@@ -170,7 +172,7 @@ A hue range which crosses the apex (i.e. `360°..0°') is permitted."
                                         ,(list (car range) (cons 0 b)))
                                     `(,range))))
                           (if acc
-                              (concatenate 'list acc r)
+                              (cl-concatenate 'list acc r)
                             r)))
                       nil
                       init-hue-groups))
