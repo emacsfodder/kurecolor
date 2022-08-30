@@ -2,7 +2,7 @@
 ;;
 ;;; Author: Jason Milkins <jasonm23@gmail.com>
 ;;
-;;; Version: 1.6.1
+;;; Version: 1.6.2
 ;;
 ;;; Package-Requires: ((emacs "24.4") (s "1.12"))
 ;;
@@ -67,7 +67,7 @@
       (when (locate-library "cl-lib")
         (require 'cl-lib))
       (when (not (fboundp 'cl-concatenate))
-        (defalias 'cl-concatenate 'concatenate) 
+        (defalias 'cl-concatenate 'concatenate))
       (when (not (fboundp 'cl-plusp))
         (defalias 'cl-plusp 'plusp))
       (when (not (fboundp 'cl-minusp))
