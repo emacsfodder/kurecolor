@@ -1,7 +1,7 @@
 ;;; kurecolor-examples --- tests for Kurecolor
 ;; -*- lexical-binding: t; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)))); -*-
 ;;
-;; Version: 1.6.0
+;; Version: 1.6.1
 ;;
 ;;; Commentary:
 ;; Uses a prototype ert test wrapper `./etd.el'.
