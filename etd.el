@@ -18,7 +18,7 @@
 ;; Derived from the test/docs functions/macros in magnars/s.el library.
 ;;
 ;; ETD allows the simple writing of examples as tests and generation of
-;; markdown documents for both functions and examples.
+;; markdown documents for both etd--functions and examples.
 ;;
 ;; Currently this package is dogfooding in emacsfodder/kurecolor and will be
 ;; backported to magnars/s.el for further testing at a suitable time. It
@@ -44,47 +44,63 @@
         (require 'cl-lib)))
    (require 'cl-lib)))
 
-(defvar etd-testing t "When set to t run tests, when set to nil generate documents.")
-(defvar functions '() "Collected functions.")
+(defvar etd--testing t "When set to t run tests, when set to nil generate documents.")
+(defvar etd--functions '() "Collected functions.")
+(defvar etd--float-approximation 0.0001)
 
-(defun examples-to-should-1 (examples)
-  "Create one `should' from EXAMPLES."
-  (let ((actual (car examples))
-        (expected (nth 2 examples)))
-    `(should (equal-including-properties ,actual ,expected))))
+(defun etd--approximately-equal (x y)
+  "Test approximately equal floating point numbers. In `defexamples' use  `X ~> Y'."
+  (or (= x y)
+      (< (/ (abs (- x y))
+            (max (abs x) (abs y)))
+         etd--float-approximation)))
 
-(defun examples-to-should (examples)
-  "Create `should' for all EXAMPLES."
-  (let (result)
+(defun etd--example-to-test (cmd idx example)
+  "Create one `ert-deftest' from CMD, IDX and EXAMPLE."
+  (let ((test-name (format "%s-%02i" cmd idx))
+        (actual (car example))
+        (matcher (nth 1 example))
+        (expected (nth 2 example)))
+    (when (string= matcher "=>")
+      `(ert-deftest ,test-name ()
+        (should (equal-including-properties ,actual ,expected))))
+    (when (string= matcher "~>")
+      `(ert-deftest ,test-name ()
+        (should (etd-approximately-equal ,actual ,expected))))))
+
+(defun etd--examples-to-tests (cmd examples)
+  "Create `ert-deftest' for CMD and each of the EXAMPLES."
+  (let (result (idx 0))
     (while examples
-      (setq result (cons (examples-to-should-1 examples) result))
+      (setq idx (1+ idx))
+      (setq result (cons (etd--example-to-test cmd idx examples) result))
       (setq examples (cdr (cddr examples))))
     (nreverse result)))
 
 (defmacro defexamples (cmd &rest examples)
   "CMD and EXAMPLES to ert-deftests."
   (declare (indent 1))
-  (if etd-testing
+  (if etd--testing
 
-   `(ert-deftest ,cmd ()
-      ,@(examples-to-should examples))
+   `(progn
+     ,@(etd--examples-to-tests cmd examples))
 
-   `(add-to-list 'functions (list
-                             ',cmd
-                             (docs--signature (symbol-function ',cmd))
-                             (docs--docstring (symbol-function ',cmd))
-                             (examples-to-strings ',examples)))))
+   `(add-to-list 'etd--functions (list
+                                  ',cmd
+                                  (etd--docs--signature (symbol-function ',cmd))
+                                  (etd--docs--docstring (symbol-function ',cmd))
+                                  (etd--examples-to-strings ',examples)))))
 
 (defmacro def-example-group (group &rest examples)
   "GROUP of EXAMPLES for docs."
   (declare (indent 1))
-  (if etd-testing
+  (if etd--testing
       `(progn ,@examples)
    `(progn
-      (add-to-list 'functions ,group)
+      (add-to-list 'etd--functions ,group)
       ,@examples)))
 
-(defun example-to-string (example)
+(defun etd--example-to-string (example)
   "EXAMPLE to string."
   (let ((actual (car example))
         (expected (nth 2 example)))
@@ -98,31 +114,31 @@
        ("\\\\\\?" . "?"))
      :initial-value (format "%S\n ⇒ %S" actual expected))))
 
-(defun examples-to-strings (examples)
+(defun etd--examples-to-strings (examples)
   "Create strings from list of EXAMPLES."
   (let (result)
     (while examples
-      (setq result (cons (example-to-string examples) result))
+      (setq result (cons (etd--example-to-string examples) result))
       (setq examples (cdr (cddr examples))))
     (nreverse result)))
 
-(defun docs--signature (cmd)
+(defun etd--docs--signature (cmd)
   "Get function signature for CMD."
   (if (eq 'macro (car cmd))
       (nth 2 cmd)
     (cadr cmd)))
 
-(defun docs--docstring (cmd)
+(defun etd--docs--docstring (cmd)
   "Get docstring for CMD."
   (if (eq 'macro (car cmd))
       (nth 3 cmd)
     (nth 2 cmd)))
 
-(defun quote-and-downcase (string)
+(defun etd--quote-and-downcase (string)
   "Wrap STRING in backquotes for markdown."
   (format "`%s`" (downcase string)))
 
-(defun quote-docstring (docstring)
+(defun etd--quote-docstring (docstring)
   "Quote DOCSTRING."
   (if (null docstring)
       ""
@@ -138,24 +154,34 @@
            "`\\1`"
            (replace-regexp-in-string
             "\\b\\([A-Z][A-Z0-9-]*\\)\\b"
-            'quote-and-downcase
+            'etd--quote-and-downcase
             docstring t)))))))
 
-(defun function-to-md (function)
+(defvar etd-function-to-md-template
+  "### %s %s
+
+%s
+
+```lisp
+%s
+```
+")
+
+(defun etd--function-to-md (function)
   "FUNCTION to markdown."
   (if (stringp function)
       ""
     (let ((command-name (car function))
           (signature (cadr function))
-          (docstring (quote-docstring (nth 2 function)))
+          (docstring (etd--quote-docstring (nth 2 function)))
           (examples (nth 3 function)))
-      (format "### %s %s\n\n%s\n\n```lisp\n%s\n```\n"
+      (format etd-function-to-md-template
               command-name
               (if signature (format "`%s`" signature) "")
               docstring
-              (mapconcat 'identity (first-three examples) "\n")))))
+              (mapconcat 'identity (etd--first-three examples) "\n")))))
 
-(defun docs--chop-suffix (suffix s)
+(defun etd--docs--chop-suffix (suffix s)
   "Remove SUFFIX from S."
   (let ((pos (- (length suffix))))
     (if (and (>= (length s) (length suffix))
@@ -163,13 +189,13 @@
         (substring s 0 pos)
       s)))
 
-(defun github-id (command-name signature)
+(defun etd--github-id (command-name signature)
   "Generate GitHub ID for COMMAND-NAME and SIGNATURE."
-  (docs--chop-suffix
+  (etd--docs--chop-suffix
    "-"
    (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (format "%S %S" command-name (if signature signature "")))))
 
-(defun function-summary (function)
+(defun etd--function-summary (function)
   "Create a markdown summary of FUNCTION."
   (if (stringp function)
       (concat "\n### " function "\n")
@@ -177,10 +203,21 @@
           (signature (cadr function)))
       (format "* [%s](#%s) %s"
               command-name
-              (github-id command-name signature)
+              (etd--github-id command-name signature)
               (if signature (format "`%s`" signature) "")))))
 
-(defun simplify-quotes ()
+(defun etd--first-three (list)
+  "Select first 3 examples from LIST."
+  (let (first)
+    (when (car list)
+      (setq first (cons (car list) first))
+      (when (cadr list)
+        (setq first (cons (cadr list) first))
+        (when (nth 2 list)
+          (setq first (cons (nth 2 list) first)))))
+    (nreverse first)))
+
+(defun etd--simplify-quotes ()
   "Simplify quotes in buffer."
   (goto-char (point-min))
   (while (search-forward "(quote nil)" nil t)
@@ -195,52 +232,41 @@
       (delete-char 7)
       (insert "'"))))
 
-(defun goto-and-remove (s)
+(defun etd--goto-and-remove (s)
   "Goto S in buffer and remove it."
   (goto-char (point-min))
   (search-forward s)
   (delete-char (- (length s))))
 
-(defun create-docs-file (template readme)
+(defun etd--create-docs-file (template readme)
   "Create README from TEMPLATE."
   (interactive "fSelect Template: \nFSelect README.md file: ")
-  (let ((functions (nreverse functions)))
+  (let ((etd--functions (nreverse etd--functions)))
     (with-temp-file readme
      (insert-file-contents-literally template)
-     (goto-and-remove "[[ function-list ]]")
-     (insert (mapconcat 'function-summary functions "\n"))
-     (goto-and-remove "[[ function-docs ]]")
-     (insert (mapconcat 'function-to-md functions "\n"))
-     (simplify-quotes))))
+     (etd--goto-and-remove "[[ function-list ]]")
+     (insert (mapconcat 'etd--function-summary etd--functions "\n"))
+     (etd--goto-and-remove "[[ function-docs ]]")
+     (insert (mapconcat 'etd--function-to-md etd--functions "\n"))
+     (etd--simplify-quotes))))
 
-(defun create-docs-file-for-buffer (template readme)
+(defun etd-create-docs-file-for-buffer (template readme)
   "Create README from TEMPLATE."
   (interactive "fSelect Template: \nFSelect README.md file: ")
-  (setq etd-testing nil)
-  (setq functions '())
+  (setq etd--testing nil)
+  (setq etd--functions '())
   (eval-buffer)
-  (create-docs-file template readme)
-  (setq etd-testing t)
+  (etd--create-docs-file template readme)
+  (setq etd--testing t)
   (eval-buffer))
 
-(defun create-docs-file-for (examples-file template readme)
+(defun etd-create-docs-file-for (examples-file template readme)
   "Using EXAMPLES-FILE and TEMPLATE create README."
   (interactive "fSelect Examples file: \nfSelect Template: \nFSelect README.md file: ")
-  (setq etd-testing nil)
-  (setq functions '())
+  (setq etd--testing nil)
+  (setq etd--functions '())
   (load-file examples-file)
-  (create-docs-file template readme))
-
-(defun first-three (list)
-  "Select first 3 examples from LIST."
-  (let (first)
-    (when (car list)
-      (setq first (cons (car list) first))
-      (when (cadr list)
-        (setq first (cons (cadr list) first))
-        (when (nth 2 list)
-          (setq first (cons (nth 2 list) first)))))
-    (nreverse first)))
+  (etd--create-docs-file template readme))
 
 (provide 'etd)
 ;;; etd.el ends here
