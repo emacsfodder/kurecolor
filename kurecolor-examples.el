@@ -143,12 +143,12 @@
 (def-example-group "Get hue, saturation, brightness"
  (defexamples kurecolor-hex-get-brightness
    (kurecolor-hex-get-brightness "#FFFFFF") => 1.0
-   (kurecolor-hex-get-brightness "#808080") ~> 0.5019
+   (kurecolor-hex-get-brightness "#808080") ~> 0.5020
    (kurecolor-hex-get-brightness "#000000") => 0.0)
 
  (defexamples kurecolor-hex-get-saturation
     (kurecolor-hex-get-saturation "#00FF00") => 1.0
-    (kurecolor-hex-get-saturation "#7FFF7F") ~> 0.5019
+    (kurecolor-hex-get-saturation "#7FFF7F") ~> 0.5020
     (kurecolor-hex-get-saturation "#000000") => 0.0)
 
  (defexamples kurecolor-hex-get-hue
