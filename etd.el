@@ -59,14 +59,9 @@
   "Create one `ert-deftest' from CMD, IDX and EXAMPLE."
   (let ((test-name (format "%s-%02i" cmd idx))
         (actual (car example))
-        (matcher (nth 1 example))
         (expected (nth 2 example)))
-    (when (string= matcher "=>")
-      `(ert-deftest ,test-name ()
-        (should (equal-including-properties ,actual ,expected))))
-    (when (string= matcher "~>")
-      `(ert-deftest ,test-name ()
-        (should (etd-approximately-equal ,actual ,expected))))))
+     `(ert-deftest ,test-name ()
+       (should (equal-including-properties ,actual ,expected)))))
 
 (defun etd--examples-to-tests (cmd examples)
   "Create `ert-deftest' for CMD and each of the EXAMPLES."
