@@ -111,9 +111,9 @@
 
 (def-example-group "RGB Hex to rgb"
  (defexamples kurecolor-hex-to-rgb
-   (kurecolor-hex-to-rgb "#347291") => '(0.20392156862745098 0.4470588235294118 0.5686274509803921)
-   (kurecolor-hex-to-rgb "#72FF91") => '(0.4470588235294118 1.0 0.5686274509803921)
-   (kurecolor-hex-to-rgb "#720091") => '(0.4470588235294118 0.0 0.5686274509803921)))
+   (kurecolor-hex-to-rgb "#347291") ~> '(0.2039 0.4471 0.5686)
+   (kurecolor-hex-to-rgb "#72FF91") ~> '(0.4471 1.0 0.5686)
+   (kurecolor-hex-to-rgb "#720091") ~> '(0.4471 0.0 0.5686)))
 
 (def-example-group "RGBA Hex to rgba"
  (defexamples kurecolor-hex-to-rgba

@@ -46,14 +46,66 @@
 
 (defvar etd--testing t "When set to t run tests, when set to nil generate documents.")
 (defvar etd--functions '() "Collected functions.")
-(defvar etd--float-approximation 0.0001)
+(defvar etd--float-precision 0.0001)
 
-(defun etd--approximately-equal (x y)
-  "Test approximately equal floating point numbers. In `defexamples' use  `X ~> Y'."
+(defun etd--zip (x y)
+  "Zip lists X & Y together as a list of cons cells."
+  (when (and (etd--listsp x y)
+             (etd--length= x y))
+    (let (result
+          (c 0)
+          (l (length x)))
+      (while (< c l)
+        (push (cons (nth c x) (nth c y)) result)
+        (setq c (1+ c)))
+      (reverse result))))
+
+(defun etd--listsp (&rest lists)
+  "Return non-nil if all LISTS satisfy `listp'."
+  (cl-reduce
+   (lambda (c l) (and c (listp l)))
+   lists))
+
+(defun etd--compare-flat-lists (x y fn)
+  "Compare to flat lists X & Y using FN."
+  (cl-reduce
+   (lambda (c l) (and c (funcall fn (car l) (cdr l))))
+   (etd--zip x y)))
+
+(defun etd--length= (x y)
+  "Test (length= X Y)."
+  (= (length x) (length y)))
+
+(defun etd--approximate-equal (x y)
+  "Test approximate equality of X and Y."
+  (if (and (listp x) (etd--listsp x y))
+      (etd--lists-approx-equal x y)
+    (etd--approx-equal x y)))
+
+(defun etd--approx-equal (x y)
+  "Test approximate equality.
+
+In `defexamples' use the form  `X ~> Y'.
+
+Floating point correspondents will be approximated by
+`etd--float-precision'"
   (or (= x y)
-      (< (/ (abs (- x y))
-            (max (abs x) (abs y)))
-         etd--float-approximation)))
+      (equal x y)
+      (and (floatp x) (floatp y)
+           (< (/ (abs (- x y))
+                 (max (abs x) (abs y)))
+              etd--float-precision))))
+
+(defun etd--lists-approx-equal (x y)
+  "Test approximate equality of lists of numbers.
+
+In `defexamples' use the from  `X ~> Y'.
+
+Floating point correspondents will be approximated by
+`etd--float-precision'"
+   (and (etd--listsp x y)
+    (and (etd--length= x y))
+    (and (etd--compare-flat-lists x y 'etd--approx-equal))))
 
 (defun etd--example-to-test (cmd idx example)
   "Create one `ert-deftest' from CMD, IDX and EXAMPLE."
@@ -68,7 +120,7 @@
 
       ((string= "~>" operator)
        `(ert-deftest ,test-name ()
-           (should (etd--approximately-equal ,actual ,expected)))))))
+           (should (etd--approximate-equal ,actual ,expected)))))))
 
 (defun etd--examples-to-tests (cmd examples)
   "Create `ert-deftest' for CMD and each of the EXAMPLES."
