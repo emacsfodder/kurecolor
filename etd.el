@@ -61,12 +61,11 @@
         (actual (car example))
         (operator (nth 1 example))
         (expected (nth 2 example)))
-    (pcase operator
-      ("=>" `(ert-deftest ,test-name ()
-               (should (equal-including-properties ,actual ,expected))))
+      `(ert-deftest ,test-name ()
+        (should (equal-including-properties ,actual ,expected)))))
 
-      ("~>" `(ert-deftest ,test-name ()
-               (should (etd--approximately-equal ,actual ,expected)))))))
+      ;; ("~>" `(progn ,(ert-deftest ,test-name ()
+      ;;                 (should (etd--approximately-equal ,actual ,expected)))))))
 
 (defun etd--examples-to-tests (cmd examples)
   "Create `ert-deftest' for CMD and each of the EXAMPLES."
