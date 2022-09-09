@@ -61,11 +61,14 @@
         (actual (car example))
         (operator (nth 1 example))
         (expected (nth 2 example)))
-      `(ert-deftest ,test-name ()
-        (should (equal-including-properties ,actual ,expected)))))
+    (cond
+      ((string= "=>" operator)
+       `(ert-deftest ,test-name ()
+           (should (equal-including-properties ,actual ,expected))))
 
-      ;; ("~>" `(progn ,(ert-deftest ,test-name ()
-      ;;                 (should (etd--approximately-equal ,actual ,expected)))))))
+      ((string= "~>" operator)
+       `(ert-deftest ,test-name ()
+           (should (etd--approximately-equal ,actual ,expected)))))))
 
 (defun etd--examples-to-tests (cmd examples)
   "Create `ert-deftest' for CMD and each of the EXAMPLES."
