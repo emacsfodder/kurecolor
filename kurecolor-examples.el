@@ -6,7 +6,7 @@
 ;;; Commentary:
 ;; Uses a prototype ert test wrapper `./etd.el'.
 ;;
-;;; ;;; Code:
+;;; Code:
 
 (require 'etd)
 (require 'dash)

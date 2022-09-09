@@ -57,7 +57,7 @@
 
 (defun etd--example-to-test (cmd idx example)
   "Create one `ert-deftest' from CMD, IDX and EXAMPLE."
-  (let ((test-name (format "%s-%02i" cmd idx))
+  (let ((test-name (intern (format "%s-%02i" cmd idx)))
         (actual (car example))
         (expected (nth 2 example)))
      `(ert-deftest ,test-name ()
