@@ -148,7 +148,7 @@
 
  (defexamples kurecolor-hex-get-saturation
     (kurecolor-hex-get-saturation "#00FF00") => 1.0
-    (kurecolor-hex-get-saturation "#7FFF7F") ~> 0.5020
+    (kurecolor-hex-get-saturation "#7FFF7F") ~> 0.5019
     (kurecolor-hex-get-saturation "#000000") => 0.0)
 
  (defexamples kurecolor-hex-get-hue
