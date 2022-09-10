@@ -506,7 +506,7 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 
 ### Test/Examples
 
-The examples documented run as  ERT tests, using the framework [ETD](/emacsfodder/etd)  (in `kurecolor-examples.el`). You can run them using `bin/test` from the package folder.`
+The examples documented run as  ERT tests, using the framework [ETD](//github.com/emacsfodder/etd)  (in `kurecolor-examples.el`). You can run them using `bin/test` from the package folder.`
 
 ## Ephemera
 
