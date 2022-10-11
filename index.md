@@ -109,7 +109,7 @@ low `n1` to high `n2`.
 ```lisp
 (kurecolor-hue-group "#00FF00" '((group-a (340 . 120)) (group-b (120 . 240)) (group-c (240 . 340))))
  ⇒ 'group-b
-(kurecolor-hue-group "#FFFF00" kurecolor-hue-ranges)
+(kurecolor-hue-group "#FFFF00" kurecolor-hue-groups)
  ⇒ 'yellow-green
 (kurecolor-hue-group "#FF0000")
  ⇒ 'red
@@ -139,7 +139,7 @@ Convert `n` (`0.0..1.0`) to `0-255`.
 (kurecolor-to-8bit 1)
  ⇒ 255.0
 (kurecolor-to-8bit 0.3231)
- ⇒ 82.3905
+ ⇒ 82.39
 ```
 
 ### kurecolor-interpolate `(color1 color2)`
@@ -308,11 +308,11 @@ The `r`,`g`,`b` values range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-hex-to-rgb "#347291")
- ⇒ '(0.20392156862745098 0.4470588235294118 0.5686274509803921)
+ ⇒ '(0.2039 0.4471 0.5686)
 (kurecolor-hex-to-rgb "#72FF91")
- ⇒ '(0.4470588235294118 1.0 0.5686274509803921)
+ ⇒ '(0.4471 1.0 0.5686)
 (kurecolor-hex-to-rgb "#720091")
- ⇒ '(0.4470588235294118 0.0 0.5686274509803921)
+ ⇒ '(0.4471 0.0 0.5686)
 ```
 
 
@@ -329,11 +329,11 @@ The returned list `(rgba)` values will range between `0.0..1.0`.
 
 ```lisp
 (kurecolor-hex-to-rgba "#34729100")
- ⇒ '(0.20392156862745098 0.4470588235294118 0.5686274509803921 0.0)
+ ⇒ '(0.2039 0.4471 0.5686 0.0)
 (kurecolor-hex-to-rgba "#FFFFFFFF")
  ⇒ '(1.0 1.0 1.0 1.0)
 (kurecolor-hex-to-rgba "#72009172")
- ⇒ '(0.4470588235294118 0.0 0.5686274509803921 0.4470588235294118)
+ ⇒ '(0.44715 0.0 0.5686 0.4471)
 ```
 
 
@@ -343,11 +343,11 @@ Convert a `rgb` `hex` color to `h` `s` `v`.
 
 ```lisp
 (kurecolor-hex-to-hsv "#347291")
- ⇒ '(0.5555555555555556 0.6413793103448275 0.5686274509803921)
+ ⇒ '(0.5556 0.6414 0.5686)
 (kurecolor-hex-to-hsv "#729134")
- ⇒ '(0.2222222222222222 0.6413793103448275 0.5686274509803921)
+ ⇒ '(0.2222 0.6414 0.5686)
 (kurecolor-hex-to-hsv "#913472")
- ⇒ '(0.8888888888888888 0.6413793103448275 0.5686274509803921)
+ ⇒ '(0.8889 0.6414 0.5686)
 ```
 
 ### kurecolor-hsv-to-hex `(h s v)`
@@ -355,7 +355,7 @@ Convert a `rgb` `hex` color to `h` `s` `v`.
 Convert `h` `s` `v` to a `rgb` hex color.
 
 ```lisp
-(kurecolor-hsv-to-hex 0.5555555555555556 0.65 0.5686274509803921)
+(kurecolor-hsv-to-hex 0.556 0.65 0.5687)
  ⇒ "#327191"
 (kurecolor-hsv-to-hex 1.0 0.7 1.0)
  ⇒ "#FF4C4C"
@@ -369,8 +369,8 @@ Convert hsv (`h` `s` `v`) to red green blue.
 Note: args `h` `s` `v` are expected to be a values from `0.0..1.0`
 
 ```lisp
-(kurecolor-hsv-to-rgb 0.5555555555555556 0.6413793103448275 0.5686274509803921)
- ⇒ '(0.203921568627451 0.4470588235294117 0.5686274509803921)
+(kurecolor-hsv-to-rgb 0.5555 0.6413 0.5686)
+ ⇒ '(0.2039 0.4472 0.5686)
 ```
 
 ### kurecolor-rgb-to-hex `(rgb)`
@@ -380,7 +380,7 @@ Note: args `h` `s` `v` are expected to be a values from `0.0..1.0`
 The `r`,`g`,`b` values can range between `0.0..1.0`.
 
 ```lisp
-(kurecolor-rgb-to-hex '(0.20392156862745098 0.4470588235294118 0.5686274509803921))
+(kurecolor-rgb-to-hex '(0.204 0.44706 0.5687))
  ⇒ "#347291"
 ```
 
@@ -393,7 +393,7 @@ Get the brightness of `hex` color.
 (kurecolor-hex-get-brightness "#FFFFFF")
  ⇒ 1.0
 (kurecolor-hex-get-brightness "#808080")
- ⇒ 0.5019607843137255
+ ⇒ 0.502
 (kurecolor-hex-get-brightness "#000000")
  ⇒ 0.0
 ```
@@ -406,7 +406,7 @@ Get the saturation of `hex` color.
 (kurecolor-hex-get-saturation "#00FF00")
  ⇒ 1.0
 (kurecolor-hex-get-saturation "#7FFF7F")
- ⇒ 0.5019607843137255
+ ⇒ 0.502
 (kurecolor-hex-get-saturation "#000000")
  ⇒ 0.0
 ```
@@ -419,9 +419,9 @@ Get the hue of `hex` color.
 (kurecolor-hex-get-hue "#FF0000")
  ⇒ 0.0
 (kurecolor-hex-get-hue "#00FF00")
- ⇒ 0.3333333333333333
+ ⇒ 0.3333
 (kurecolor-hex-get-hue "#0000FF")
- ⇒ 0.6666666666666666
+ ⇒ 0.6667
 ```
 
 
