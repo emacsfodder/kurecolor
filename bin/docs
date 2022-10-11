@@ -31,21 +31,10 @@ emacs --batch \
   -eval "(add-to-list 'load-path \"${s}\")" \
   -l s \
   -l ert \
-  -l ./etd.el \
+  -l dev/etd.el \
   -l ./kurecolor.el \
-  -l ./kurecolor-examples.el \
+  -l dev/kurecolor-examples.el \
   --eval "(message \"Update README.md\")" \
-  --eval "(create-docs-file-for \"kurecolor-examples.el\" \"doc-template\" \"README.md\")" \
+  --eval "(etd-create-docs-file-for \"dev/kurecolor-examples.el\" \"dev/doc-template\" \"README.md\")" \
   --eval "(message \"Update index.md\")" \
-  --eval "(create-docs-file-for \"kurecolor-examples.el\" \"index-template\" \"index.md\")"
-
-echo "
-════════════════════════════════════════════════════════════════════════════════"
-echo "cat README.md"
-cat README.md
-echo "
-════════════════════════════════════════════════════════════════════════════════"
-echo "cat index.md"
-cat index.md
-echo "
-════════════════════════════════════════════════════════════════════════════════"
+  --eval "(etd-create-docs-file-for \"dev/kurecolor-examples.el\" \"dev/index-template\" \"index.md\")"

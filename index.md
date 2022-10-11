@@ -1,5 +1,3 @@
-# Kurecolor
-
 A collection of tools aimed at those working with color, useful for CSS,
 Emacs themes, etc.
 
@@ -8,6 +6,10 @@ Emacs themes, etc.
 [![MELPA](https://melpa.org/packages/kurecolor-badge.svg)](https://melpa.org/#/kurecolor)
 
 Use rainbow-mode when using kurecolor commands, for instant feedback on color changes.
+
+## Repository
+
+Visit the main repository at https://github.com/emacsfodder/kurecolor
 
 ## Installing
 
@@ -508,19 +510,3 @@ Convert a hex `rgba` string to an XCode `colorLiteral`.
 The examples documented here are live tests (in `kurecolor-examples.el`). You can
 run them using `bin/test` from the package folder.`
 
-## Ephemera
-
-For those interested in such things, the name Kurecolor is
-unashamedly nicked from a high end marker pen company.  Hopefully
-this outrage will fall silently under their radar, and I won't have
-to change it due to some frivilous and paranoid law
-suit. (seriously guys, this is just free advertising.)
-
-I have not been pressured into saying this, however, Kurecolor
-markers and art supplies are the very best!  Buy some (many!) NOW (Like REALLY
-Immediately!!) for you, your mum and your pet chinchilla Frank.
-
-Since the question comes up occassionally, the mode-line hack used
-in the presentation is based on original work by Armit Patel. I
-gisted this a while back, you can get it from.
-https://gist.github.com/jasonm23/8554119

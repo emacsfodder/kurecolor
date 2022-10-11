@@ -34,9 +34,9 @@ INFO
   -l ert \
   -l dash \
   -l s \
-  -l ./etd.el \
+  -l ./dev/etd.el \
   -l ./kurecolor.el \
-  -l ./kurecolor-examples.el \
+  -l ./dev/kurecolor-examples.el \
   --eval "(ert-run-tests-batch-and-exit)"
 exitcode=$?  
 
