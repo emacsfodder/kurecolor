@@ -1,4 +1,5 @@
 #!/bin/sh
+etd="$(dirname "$(find ~/.emacs.d | grep "/etd.el$" | tail -1)")"
 dash="$(dirname "$(find ~/.emacs.d | grep "/dash.el$" | tail -1)")"
 s="$(dirname "$(find ~/.emacs.d | grep "/s.el$" | tail -1)")"
 
@@ -20,6 +21,7 @@ cat <<INFO
 
 ────────────────────────────────────────────────────────────────────────────────
 Required packages present:
+ETD: $etd
 Dash: $dash
    S: $s
 ════════════════════════════════════════════════════════════════════════════════
@@ -30,11 +32,12 @@ INFO
 "$EMACS" --batch \
   -eval "(add-to-list 'load-path \"${dash}\")" \
   -eval "(add-to-list 'load-path \"${s}\")" \
+  -eval "(add-to-list 'load-path \"${etd}\")" \
   -eval "(add-to-list 'load-path \".\")" \
   -l ert \
   -l dash \
   -l s \
-  -l ./dev/etd.el \
+  -l etd \
   -l ./kurecolor.el \
   -l ./dev/kurecolor-examples.el \
   --eval "(ert-run-tests-batch-and-exit)"
